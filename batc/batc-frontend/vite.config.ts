@@ -3,8 +3,11 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react(), tailwindcss()],
+  // GitHub Pages serves the app under /BATC_AGRISYSTEM_NEXTVERS/.
+  // In dev (vite serve) we stay at "/" so the proxy works as usual.
+  base: command === "build" ? "/BATC_AGRISYSTEM_NEXTVERS/" : "/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

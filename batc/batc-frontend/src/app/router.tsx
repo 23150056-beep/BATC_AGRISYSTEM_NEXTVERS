@@ -32,6 +32,9 @@ import StaffReportsPage from "@/pages/staff/StaffReportsPage";
 import StaffDashboardPage from "@/pages/staff/StaffDashboardPage";
 import StaffFeedbackPage from "@/pages/staff/StaffFeedbackPage";
 
+// import.meta.env.BASE_URL is "/" in dev and "/BATC_AGRISYSTEM_NEXTVERS/" on
+// GitHub Pages (set by vite.config.ts `base`). Passing it as `basename` keeps
+// React Router in sync with whatever path the app is hosted under.
 export const router = createBrowserRouter([
   { path: "/login",    element: <LoginPage /> },
   { path: "/register", element: <FarmerRegisterPage /> },
@@ -112,4 +115,4 @@ export const router = createBrowserRouter([
   },
 
   { path: "*", element: <Navigate to="/" replace /> },
-]);
+], { basename: import.meta.env.BASE_URL });

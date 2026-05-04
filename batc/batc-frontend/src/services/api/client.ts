@@ -1,7 +1,12 @@
 import axios from "axios";
 
+// VITE_API_URL is injected at build time from the GitHub Actions secret.
+// Empty in local dev → relative URL, picked up by the Vite proxy.
+// Set to "https://<your-render-app>.onrender.com" in production.
+const API_ORIGIN = (import.meta.env.VITE_API_URL as string | undefined) ?? "";
+
 const apiClient = axios.create({
-  baseURL: "/api/v1",
+  baseURL: `${API_ORIGIN}/api/v1`,
   headers: { "Content-Type": "application/json" },
 });
 
@@ -22,7 +27,7 @@ apiClient.interceptors.response.use(
       const refresh = localStorage.getItem("refresh_token");
       if (refresh) {
         try {
-          const { data } = await axios.post("/api/v1/auth/refresh/", { refresh });
+          const { data } = await axios.post(`${API_ORIGIN}/api/v1/auth/refresh/`, { refresh });
           localStorage.setItem("access_token", data.access);
           // m-18: persist rotated refresh token so subsequent expiry cycles don't
           // silently log the user out (SimpleJWT ROTATE_REFRESH_TOKENS=True issues
@@ -35,7 +40,7 @@ apiClient.interceptors.response.use(
         } catch {
           localStorage.removeItem("access_token");
           localStorage.removeItem("refresh_token");
-          window.location.href = "/login";
+          window.location.href = `${import.meta.env.BASE_URL}login`;
         }
       }
     }
