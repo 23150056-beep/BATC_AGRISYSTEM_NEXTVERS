@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+media/
+private_media/
+staticfiles/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment / secrets
+.env
+.env.local
+.env.production
+*.pem
+*.key
+
+# Migrations: keep schema migrations, ignore generated artifacts
+# (intentionally NOT ignoring */migrations/ — those are tracked)
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Reports / generated docs
+_gaps.txt
+_bugs.txt
+_gaps.md
+
+# Cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage

@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@theme {
+  /* === Brand palette === */
+  --color-batc-green-primary: #3b6d11;
+  --color-batc-green-interactive: #639922;
+  --color-batc-green-surface: #eaf3de;
+  --color-batc-navy-sidebar: #162036;
+  --color-batc-navy-hover: #1e2f4a;
+  --color-batc-navy-text: #8aa0bb;
+  --color-batc-navy-text-active: #e8f0e0;
+
+  /* === Semantic tokens (from improvement plan) === */
+  --color-brand-600: #3b6d11;
+  --color-brand-500: #639922;
+  --color-brand-100: #eaf3de;
+  --color-ink-900: #162036;
+  --color-ink-700: #1e2f4a;
+  --color-success: #2f7d32;
+  --color-success-soft: #e6f4e8;
+  --color-warning: #c2682e;
+  --color-warning-soft: #faeeda;
+  --color-danger: #b42318;
+  --color-danger-soft: #fde8e6;
+  --color-info: #0c447c;
+  --color-info-soft: #e6f1fb;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: #1f2937;
+}
+
+#root {
+  min-height: 100svh;
+}
+
+/* Visible focus ring for accessibility (replaces browser blue) */
+:focus-visible {
+  outline: 2px solid var(--color-brand-600);
+  outline-offset: 2px;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-brand-600);
+  outline-offset: 2px;
+}

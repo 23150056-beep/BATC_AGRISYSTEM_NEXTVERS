@@ -1,0 +1,14 @@
+# Secrets
+.env
+*.env
+
+# Claude local settings (machine-specific permissions)
+.claude/settings.local.json
+
+# Scratch / generated notes
+_gaps.txt
+_bugs.txt
+
+# OS
+.DS_Store
+Thumbs.db
