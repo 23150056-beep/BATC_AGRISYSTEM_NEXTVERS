@@ -1,0 +1,42 @@
+{
+  "name": "BATC Agricultural System",
+
+  // Python 3.12 base + Node 20 feature (covers both backend and frontend)
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": { "version": "20" }
+  },
+
+  // Runs ONCE when the Codespace is first created:
+  // installs all Python/Node deps and seeds the database.
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+
+  // Runs every time the Codespace starts (including after resume):
+  // re-migrates, re-seeds (idempotent), then launches both servers.
+  "postStartCommand": "bash .devcontainer/start.sh",
+
+  // Expose Django (API) and Vite (frontend) to the browser.
+  "forwardPorts": [8000, 5173],
+  "portsAttributes": {
+    "8000": {
+      "label": "Django API",
+      "onAutoForward": "silent"
+    },
+    "5173": {
+      "label": "BATC App",
+      "onAutoForward": "openBrowserOnce"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint"
+      ]
+    }
+  }
+}
