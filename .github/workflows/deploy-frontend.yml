@@ -27,11 +27,15 @@ jobs:
         working-directory: batc/batc-frontend
         run: npm ci
 
-      - name: Build
+      - name: Generate MSW service worker
+        working-directory: batc/batc-frontend
+        run: npx msw init public/ --save
+
+      - name: Build (demo mode — MSW intercepts all API calls)
         working-directory: batc/batc-frontend
         run: npm run build
         env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_USE_MOCK: "true"
 
       - name: Add .nojekyll (prevent Jekyll from ignoring _files)
         run: touch batc/batc-frontend/dist/.nojekyll
