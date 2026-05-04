@@ -27,10 +27,6 @@ jobs:
         working-directory: batc/batc-frontend
         run: npm ci
 
-      - name: Generate MSW service worker
-        working-directory: batc/batc-frontend
-        run: npx msw init public/ --save
-
       - name: Build (demo mode — MSW intercepts all API calls)
         working-directory: batc/batc-frontend
         run: npm run build
