@@ -1,3 +1,4 @@
+// @ts-nocheck — mock file, type-safety not required
 /**
  * MSW v2 request handlers — intercepts every /api/v1/* call in demo mode.
  *

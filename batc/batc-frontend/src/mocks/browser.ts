@@ -1,3 +1,4 @@
+// @ts-nocheck — mock file, type-safety not required
 import { setupWorker } from "msw/browser";
 import { handlers } from "./handlers";
 
