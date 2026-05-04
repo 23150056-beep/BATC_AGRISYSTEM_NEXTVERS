@@ -9,6 +9,14 @@ import { authApi } from "@/services/api/auth.api";
 import { useAuthStore } from "@/stores/authStore";
 import { cn } from "@/lib/utils";
 
+const IS_DEMO = import.meta.env.VITE_USE_MOCK === "true";
+
+const DEMO_ACCOUNTS = [
+  { label: "Admin",  username: "admin",    password: "admin1234",  color: "bg-[#162036] text-white" },
+  { label: "Staff",  username: "staff01",  password: "staff1234",  color: "bg-[#3B6D11] text-white" },
+  { label: "Farmer", username: "farmer01", password: "farmer1234", color: "bg-[#0C447C] text-white" },
+];
+
 const schema = z.object({
   username: z.string().min(1, "Username is required"),
   password: z.string().min(1, "Password is required"),
@@ -23,6 +31,25 @@ export function LoginPage() {
   const [serverError, setServerError] = useState("");
   const [showPwd, setShowPwd] = useState(false);
   const [failedAttempts, setFailedAttempts] = useState(0);
+  const [demoLoading, setDemoLoading] = useState<string | null>(null);
+
+  async function quickLogin(username: string, password: string) {
+    setDemoLoading(username);
+    setServerError("");
+    try {
+      const tokens = await authApi.login({ username, password });
+      setTokens(tokens.access, tokens.refresh);
+      const user = await authApi.me();
+      setUser(user);
+      if (user.role === "ADMIN") navigate("/admin/dashboard");
+      else if (user.role === "STAFF") navigate("/staff/dashboard");
+      else navigate("/app/home");
+    } catch {
+      setServerError("Demo login failed — please try again.");
+    } finally {
+      setDemoLoading(null);
+    }
+  }
 
   const {
     register,
@@ -173,6 +200,31 @@ export function LoginPage() {
         <p className="text-center text-[11px] text-gray-400 mt-2">
           BATC Centralized Distribution System · Prototype
         </p>
+
+        {IS_DEMO && (
+          <div className="mt-5 rounded-xl border border-dashed border-amber-300 bg-amber-50 p-4">
+            <p className="text-center text-xs font-semibold text-amber-700 mb-3">
+              🧪 Demo Mode — click to log in instantly
+            </p>
+            <div className="flex gap-2 justify-center">
+              {DEMO_ACCOUNTS.map(({ label, username, password, color }) => (
+                <button
+                  key={username}
+                  type="button"
+                  onClick={() => quickLogin(username, password)}
+                  disabled={demoLoading !== null}
+                  className={cn(
+                    "flex-1 py-2 rounded-lg text-xs font-semibold transition-opacity",
+                    color,
+                    demoLoading === username ? "opacity-60" : "hover:opacity-85"
+                  )}
+                >
+                  {demoLoading === username ? "…" : label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
