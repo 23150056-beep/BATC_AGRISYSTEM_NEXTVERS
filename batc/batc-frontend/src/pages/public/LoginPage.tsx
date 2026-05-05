@@ -95,80 +95,107 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--color-brand-100)] via-gray-50 to-white px-4">
+    <div className="agri-bg-login min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4 bg-[var(--color-brand-600)] shadow-lg shadow-[var(--color-brand-600)]/20">
-            <Leaf className="text-white" size={26} />
+
+        {/* Logo + title */}
+        <div className="text-center mb-7">
+          <div
+            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4"
+            style={{
+              background: "rgba(116, 198, 157, 0.18)",
+              border: "1px solid rgba(116, 198, 157, 0.35)",
+              boxShadow: "0 4px 24px rgba(10, 28, 18, 0.3), inset 0 1px 0 rgba(255,255,255,0.1)",
+            }}
+          >
+            <Leaf style={{ color: "rgba(183, 228, 199, 0.95)" }} size={28} />
           </div>
-          <h1 className="text-2xl font-semibold text-gray-900">BATC Portal</h1>
-          <p className="text-sm text-gray-500 mt-1">Bauang Agricultural Trade Center</p>
+          <h1 className="text-2xl font-semibold" style={{ color: "rgba(232, 248, 237, 0.96)" }}>
+            BATC Portal
+          </h1>
+          <p className="text-sm mt-1" style={{ color: "rgba(116, 198, 157, 0.65)" }}>
+            Bauang Agricultural Trade Center
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+        {/* Glass login card */}
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="glass-card space-y-4 rounded-2xl p-6"
+        >
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+            <label className="block text-sm font-medium mb-1" style={{ color: "rgba(30, 70, 45, 0.9)" }}>
+              Username
+            </label>
             <input
               {...register("username")}
               autoComplete="username"
               autoFocus
               placeholder="Your username"
               className={cn(
-                "w-full px-3 py-2.5 border rounded-md text-sm outline-none transition-colors",
-                "focus:ring-2 focus:ring-[var(--color-brand-500)] focus:border-[var(--color-brand-500)]",
-                errors.username ? "border-red-400" : "border-gray-300"
+                "w-full px-3 py-2.5 rounded-md text-sm outline-none transition-all",
+                "focus:ring-2 focus:ring-[var(--color-agri-500)]/50",
+                errors.username ? "border border-red-400" : "border border-white/50"
               )}
+              style={{ background: "rgba(255,255,255,0.55)" }}
             />
-            <p className="text-[11px] text-gray-400 mt-1">
-              Farmers: use the username your barangay encoder gave you (often your mobile number).
+            <p className="text-[11px] mt-1" style={{ color: "rgba(30, 70, 45, 0.5)" }}>
+              Farmers: use the username your barangay encoder gave you.
             </p>
             {errors.username && (
-              <p className="text-xs text-red-500 mt-1">{errors.username.message}</p>
+              <p className="text-xs text-red-600 mt-1">{errors.username.message}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <label className="block text-sm font-medium mb-1" style={{ color: "rgba(30, 70, 45, 0.9)" }}>
+              Password
+            </label>
             <div className="relative">
               <input
                 {...register("password")}
                 type={showPwd ? "text" : "password"}
                 autoComplete="current-password"
                 className={cn(
-                  "w-full px-3 py-2.5 pr-10 border rounded-md text-sm outline-none transition-colors",
-                  "focus:ring-2 focus:ring-[var(--color-brand-500)] focus:border-[var(--color-brand-500)]",
-                  errors.password ? "border-red-400" : "border-gray-300"
+                  "w-full px-3 py-2.5 pr-10 rounded-md text-sm outline-none transition-all",
+                  "focus:ring-2 focus:ring-[var(--color-agri-500)]/50",
+                  errors.password ? "border border-red-400" : "border border-white/50"
                 )}
+                style={{ background: "rgba(255,255,255,0.55)" }}
               />
               <button
                 type="button"
                 onClick={() => setShowPwd((v) => !v)}
                 tabIndex={-1}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 p-1"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 transition-colors"
+                style={{ color: "rgba(30, 70, 45, 0.45)" }}
                 title={showPwd ? "Hide password" : "Show password"}
               >
                 {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
             {errors.password && (
-              <p className="text-xs text-red-500 mt-1">{errors.password.message}</p>
+              <p className="text-xs text-red-600 mt-1">{errors.password.message}</p>
             )}
           </div>
 
-          <div className="flex items-center justify-between text-xs">
-            <label className="flex items-center gap-2 text-gray-600 cursor-pointer">
-              <input type="checkbox" {...register("remember")} className="rounded border-gray-300" />
+          <div className="flex items-center text-xs">
+            <label className="flex items-center gap-2 cursor-pointer" style={{ color: "rgba(30, 70, 45, 0.65)" }}>
+              <input type="checkbox" {...register("remember")} className="rounded" />
               Remember username
             </label>
           </div>
 
           {serverError && (
-            <div className="bg-[var(--color-danger-soft)] border border-[var(--color-danger)]/20 rounded-md px-3 py-2 flex items-start gap-2">
-              <Lock size={13} className="text-[var(--color-danger)] mt-0.5 shrink-0" />
+            <div
+              className="rounded-md px-3 py-2 flex items-start gap-2"
+              style={{ background: "rgba(180, 35, 24, 0.08)", border: "1px solid rgba(180, 35, 24, 0.2)" }}
+            >
+              <Lock size={13} className="text-red-600 mt-0.5 shrink-0" />
               <div className="flex-1">
-                <p className="text-xs text-[var(--color-danger)]">{serverError}</p>
+                <p className="text-xs text-red-700">{serverError}</p>
                 {failedAttempts >= 3 && (
-                  <p className="text-[11px] text-gray-500 mt-1">
+                  <p className="text-[11px] mt-1" style={{ color: "rgba(30, 70, 45, 0.55)" }}>
                     Multiple failed attempts. Contact your barangay encoder if you need a password reset.
                   </p>
                 )}
@@ -180,44 +207,61 @@ export function LoginPage() {
             type="submit"
             disabled={isSubmitting}
             className={cn(
-              "w-full py-2.5 rounded-md text-sm font-medium text-white transition-colors bg-[var(--color-brand-600)]",
-              isSubmitting ? "opacity-60 cursor-not-allowed" : "hover:opacity-90"
+              "w-full py-2.5 rounded-md text-sm font-semibold text-white transition-all",
+              isSubmitting ? "opacity-60 cursor-not-allowed" : "hover:brightness-110 active:scale-[0.98]"
             )}
+            style={{
+              background: "linear-gradient(135deg, var(--color-agri-600) 0%, var(--color-agri-500) 100%)",
+              boxShadow: "0 2px 12px rgba(45, 106, 79, 0.35)",
+            }}
           >
             {isSubmitting ? "Signing in…" : "Sign in"}
           </button>
         </form>
 
-        <p className="text-center text-xs text-gray-500 mt-4">
+        <p className="text-center text-xs mt-4" style={{ color: "rgba(116, 198, 157, 0.55)" }}>
           Are you a farmer?{" "}
           <Link
             to="/register"
-            className="text-[var(--color-brand-600)] hover:underline font-medium"
+            className="font-medium hover:underline"
+            style={{ color: "rgba(183, 228, 199, 0.85)" }}
           >
             Register your account here
           </Link>
         </p>
-        <p className="text-center text-[11px] text-gray-400 mt-2">
+        <p className="text-center text-[11px] mt-2" style={{ color: "rgba(116, 198, 157, 0.35)" }}>
           BATC Centralized Distribution System · Prototype
         </p>
 
         {IS_DEMO && (
-          <div className="mt-5 rounded-xl border border-dashed border-amber-300 bg-amber-50 p-4">
-            <p className="text-center text-xs font-semibold text-amber-700 mb-3">
-              🧪 Demo Mode — click to log in instantly
+          <div
+            className="mt-5 rounded-xl p-4"
+            style={{
+              background: "rgba(255,255,255,0.10)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              border: "1px dashed rgba(212, 160, 23, 0.45)",
+            }}
+          >
+            <p className="text-center text-xs font-semibold mb-3" style={{ color: "rgba(212, 160, 23, 0.9)" }}>
+              Demo Mode — click to log in instantly
             </p>
             <div className="flex gap-2 justify-center">
-              {DEMO_ACCOUNTS.map(({ label, username, password, color }) => (
+              {DEMO_ACCOUNTS.map(({ label, username, password }) => (
                 <button
                   key={username}
                   type="button"
                   onClick={() => quickLogin(username, password)}
                   disabled={demoLoading !== null}
                   className={cn(
-                    "flex-1 py-2 rounded-lg text-xs font-semibold transition-opacity",
-                    color,
-                    demoLoading === username ? "opacity-60" : "hover:opacity-85"
+                    "flex-1 py-2 rounded-lg text-xs font-semibold transition-all",
+                    demoLoading === username ? "opacity-60" : "hover:brightness-110 active:scale-[0.97]"
                   )}
+                  style={{
+                    background: "rgba(255,255,255,0.14)",
+                    border: "1px solid rgba(255,255,255,0.22)",
+                    color: "rgba(232, 248, 237, 0.9)",
+                  }}
                 >
                   {demoLoading === username ? "…" : label}
                 </button>

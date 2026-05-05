@@ -28,6 +28,21 @@
   --radius-sm: 0.25rem;
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
+
+  /* === Agriculture glass palette === */
+  --color-agri-900: #071a0e;
+  --color-agri-800: #0f2d18;
+  --color-agri-700: #1b4332;
+  --color-agri-600: #2d6a4f;
+  --color-agri-500: #40916c;
+  --color-agri-400: #52b788;
+  --color-agri-300: #74c69d;
+  --color-agri-200: #b7e4c7;
+  --color-agri-100: #d8f3dc;
+  --color-agri-50:  #f0f7ee;
+  --color-agri-wheat: #d4a017;
+  --color-agri-amber: #b45309;
+  --color-agri-earth: #7c4a1e;
 }
 
 * {
@@ -57,4 +72,61 @@ select:focus-visible,
 textarea:focus-visible {
   outline: 2px solid var(--color-brand-600);
   outline-offset: 2px;
+}
+
+/* =============================================
+   Agriculture Glassmorphism Utility Classes
+   ============================================= */
+
+/* Dark forest glass — used for sidebars on dark backgrounds */
+.glass-dark {
+  background: rgba(10, 28, 18, 0.76);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* Frosted light glass — used for headers, cards on dark backgrounds */
+.glass-light-panel {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border-bottom: 1px solid rgba(52, 168, 83, 0.14);
+}
+
+/* Heavy frost glass — used for login card, prominent panels */
+.glass-card {
+  background: rgba(255, 255, 255, 0.70);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.80);
+  box-shadow: 0 8px 40px rgba(10, 28, 18, 0.22), 0 2px 8px rgba(10, 28, 18, 0.08);
+}
+
+/* Bottom nav frosted glass */
+.glass-nav-bottom {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border-top: 1px solid rgba(116, 198, 157, 0.22);
+}
+
+/* App backgrounds */
+.agri-bg {
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(64, 145, 108, 0.35) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 100%, rgba(45, 106, 79, 0.25) 0%, transparent 55%),
+    linear-gradient(155deg, #071a0e 0%, #1b4332 38%, #2d6a4f 68%, #1a3d2b 100%);
+}
+
+.agri-bg-client {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(116, 198, 157, 0.3) 0%, transparent 60%),
+    linear-gradient(180deg, #1b4332 0%, #2d6a4f 35%, #52b788 75%, #d8f3dc 100%);
+}
+
+.agri-bg-login {
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(64, 145, 108, 0.45) 0%, transparent 50%),
+    radial-gradient(ellipse at 75% 80%, rgba(212, 160, 23, 0.18) 0%, transparent 45%),
+    linear-gradient(145deg, #071a0e 0%, #1b4332 40%, #2d6a4f 65%, #1a3d2b 100%);
 }

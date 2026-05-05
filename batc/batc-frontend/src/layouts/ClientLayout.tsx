@@ -25,14 +25,24 @@ export function ClientLayout() {
   }
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-gray-50">
-      <header className="flex items-center justify-between px-4 h-12 shrink-0 bg-[var(--color-ink-900)]">
+    <div className="agri-bg-client flex flex-col h-screen overflow-hidden">
+      {/* Dark forest glass top header */}
+      <header
+        className="glass-dark flex items-center justify-between px-4 h-12 shrink-0"
+        style={{ borderBottom: "1px solid rgba(116, 198, 157, 0.14)" }}
+      >
         <div className="flex items-center gap-2">
-          <span className="text-sm font-bold tracking-widest uppercase text-[var(--color-batc-navy-text-active)]">
+          <span
+            className="text-sm font-bold tracking-widest uppercase"
+            style={{ color: "rgba(183, 228, 199, 0.95)" }}
+          >
             BATC
           </span>
           {user?.first_name && (
-            <span className="text-xs text-[var(--color-batc-navy-text)] hidden sm:inline">
+            <span
+              className="text-xs hidden sm:inline"
+              style={{ color: "rgba(116, 198, 157, 0.60)" }}
+            >
               · Hi, {user.first_name}
             </span>
           )}
@@ -42,7 +52,8 @@ export function ClientLayout() {
           <button
             onClick={handleLogout}
             title="Logout"
-            className="p-2 rounded-md text-[var(--color-batc-navy-text)] hover:text-white transition-colors"
+            className="p-2 rounded-md transition-colors"
+            style={{ color: "rgba(116, 198, 157, 0.55)" }}
           >
             <LogOut size={16} />
           </button>
@@ -53,16 +64,24 @@ export function ClientLayout() {
         <Outlet />
       </main>
 
-      <nav className="shrink-0 border-t border-gray-200 bg-white flex">
+      {/* Frosted bottom navigation */}
+      <nav className="glass-nav-bottom shrink-0 flex">
         {tabs.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
             to={to}
             className={({ isActive }) =>
               cn(
-                "flex-1 flex flex-col items-center justify-center py-2 text-[11px] gap-1 transition-colors min-h-[48px]",
-                isActive ? "text-[var(--color-brand-600)]" : "text-gray-400 hover:text-gray-600"
+                "flex-1 flex flex-col items-center justify-center py-2 text-[11px] gap-1 transition-all duration-150 min-h-[48px]",
+                isActive
+                  ? "font-semibold"
+                  : "text-gray-400 hover:text-gray-600"
               )
+            }
+            style={({ isActive }) =>
+              isActive
+                ? { color: "var(--color-agri-600)" }
+                : {}
             }
           >
             <Icon size={19} />

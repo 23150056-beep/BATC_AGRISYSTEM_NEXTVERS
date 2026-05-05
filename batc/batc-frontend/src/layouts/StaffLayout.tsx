@@ -43,11 +43,24 @@ export function StaffLayout() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="agri-bg flex h-screen overflow-hidden">
+      {/* Narrow dark forest glass icon sidebar */}
       <aside
-        className="flex flex-col items-center py-3 gap-1 border-r border-gray-200 bg-white"
-        style={{ width: 44, minWidth: 44 }}
+        className="glass-dark flex flex-col items-center py-3 gap-1"
+        style={{
+          width: 44,
+          minWidth: 44,
+          borderRight: "1px solid rgba(116, 198, 157, 0.14)",
+        }}
       >
+        {/* BATC mini-logo dot */}
+        <div
+          className="w-6 h-6 rounded-lg flex items-center justify-center mb-1"
+          style={{ background: "rgba(116, 198, 157, 0.18)" }}
+        >
+          <div className="w-2 h-2 rounded-full" style={{ background: "rgba(116, 198, 157, 0.8)" }} />
+        </div>
+
         {navItems.map(({ to, icon: Icon, label, alertKey }) => (
           <NavLink
             key={to}
@@ -55,10 +68,10 @@ export function StaffLayout() {
             title={label}
             className={({ isActive }) =>
               cn(
-                "relative p-2.5 rounded-md transition-colors",
+                "relative p-2.5 rounded-md transition-all duration-150",
                 isActive
-                  ? "bg-[#EAF3DE] text-[#3B6D11]"
-                  : "text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+                  ? "bg-white/[0.14] text-white"
+                  : "text-white/45 hover:bg-white/[0.08] hover:text-white/80"
               )
             }
           >
@@ -76,18 +89,22 @@ export function StaffLayout() {
         <button
           onClick={handleLogout}
           title="Logout"
-          className="p-2.5 rounded-md text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+          className="p-2.5 rounded-md transition-all duration-150 text-white/35 hover:bg-red-500/20 hover:text-red-300"
         >
           <LogOut size={18} />
         </button>
       </aside>
 
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="h-11 flex items-center justify-between px-4 border-b border-gray-200 bg-white">
-          <span className="text-sm text-gray-600 font-medium">{breadcrumb || "Staff Portal"}</span>
+      {/* Content area */}
+      <div
+        className="flex-1 flex flex-col overflow-hidden"
+        style={{ background: "rgba(243, 250, 246, 0.93)" }}
+      >
+        <header className="glass-light-panel h-11 flex items-center justify-between px-4 shrink-0">
+          <span className="text-sm text-gray-700 font-medium">{breadcrumb || "Staff Portal"}</span>
           <NotificationBell />
         </header>
-        <main className="flex-1 overflow-y-auto p-5 bg-gray-50">
+        <main className="flex-1 overflow-y-auto p-5 bg-transparent">
           <Outlet />
         </main>
       </div>

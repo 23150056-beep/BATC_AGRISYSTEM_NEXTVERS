@@ -51,15 +51,24 @@ export function AdminLayout() {
     : (user?.username ?? "?").slice(0, 2).toUpperCase();
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="agri-bg flex h-screen overflow-hidden">
+      {/* Dark forest glass sidebar */}
       <aside
-        className="flex flex-col bg-[var(--color-ink-900)]"
-        style={{ width: 168, minWidth: 168 }}
+        className="glass-dark flex flex-col"
+        style={{
+          width: 168,
+          minWidth: 168,
+          borderRight: "1px solid rgba(116, 198, 157, 0.14)",
+        }}
       >
-        <div className="px-4 py-5 border-b border-white/10">
-          <span className="text-sm font-bold tracking-widest uppercase text-[var(--color-batc-navy-text-active)]">
+        {/* Logo */}
+        <div className="px-4 py-5" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+          <span className="text-sm font-bold tracking-widest uppercase" style={{ color: "rgba(183, 228, 199, 0.95)" }}>
             BATC
           </span>
+          <p className="text-[10px] mt-0.5" style={{ color: "rgba(116, 198, 157, 0.55)" }}>
+            AgriSystem
+          </p>
         </div>
 
         <nav className="flex-1 py-3 overflow-y-auto">
@@ -69,10 +78,10 @@ export function AdminLayout() {
               to={to}
               className={({ isActive }) =>
                 cn(
-                  "flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors",
+                  "flex items-center gap-2.5 px-4 py-2 text-sm font-medium transition-all duration-150",
                   isActive
-                    ? "text-[var(--color-batc-navy-text-active)] bg-[var(--color-ink-700)]"
-                    : "text-[var(--color-batc-navy-text)] hover:text-[var(--color-batc-navy-text-active)] hover:bg-[var(--color-ink-700)]"
+                    ? "text-white bg-white/[0.12]"
+                    : "text-white/50 hover:text-white/85 hover:bg-white/[0.07]"
                 )
               }
             >
@@ -86,21 +95,39 @@ export function AdminLayout() {
             </NavLink>
           ))}
         </nav>
+
+        {/* Active nav indicator dot */}
+        <div className="px-4 py-4" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "rgba(116, 198, 157, 0.7)" }} />
+            <span className="text-[10px]" style={{ color: "rgba(116, 198, 157, 0.5)" }}>Connected</span>
+          </div>
+        </div>
       </aside>
 
-      <div className="flex-1 flex flex-col overflow-hidden bg-gray-50">
-        {/* Top header — breadcrumb + bell + profile */}
-        <header className="h-12 flex items-center justify-between px-5 border-b border-gray-200 bg-white">
-          <div className="text-sm text-gray-600 font-medium">{breadcrumb}</div>
+      {/* Content area — light translucent surface over the gradient */}
+      <div
+        className="flex-1 flex flex-col overflow-hidden"
+        style={{ background: "rgba(243, 250, 246, 0.93)" }}
+      >
+        {/* Frosted glass header */}
+        <header className="glass-light-panel h-12 flex items-center justify-between px-5 shrink-0">
+          <div className="text-sm text-gray-700 font-medium">{breadcrumb}</div>
           <div className="flex items-center gap-2">
             <NotificationBell />
-            <div className="flex items-center gap-2 pl-3 ml-1 border-l border-gray-200">
-              <div className="w-7 h-7 rounded-full bg-[var(--color-brand-100)] text-[var(--color-brand-600)] flex items-center justify-center text-xs font-bold">
+            <div
+              className="flex items-center gap-2 pl-3 ml-1"
+              style={{ borderLeft: "1px solid rgba(52, 168, 83, 0.14)" }}
+            >
+              <div
+                className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
+                style={{ background: "rgba(52, 168, 83, 0.12)", color: "var(--color-agri-600)" }}
+              >
                 {initials}
               </div>
               <div className="text-xs">
                 <p className="font-medium text-gray-800">{fullName || user?.username}</p>
-                <p className="text-gray-400 capitalize">{user?.role?.toLowerCase()}</p>
+                <p className="capitalize" style={{ color: "var(--color-agri-500)", fontSize: "10px" }}>{user?.role?.toLowerCase()}</p>
               </div>
               <button
                 onClick={handleLogout}
@@ -113,7 +140,7 @@ export function AdminLayout() {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-6 bg-transparent">
           <Outlet />
         </main>
       </div>
