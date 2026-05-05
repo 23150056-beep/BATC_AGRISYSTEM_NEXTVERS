@@ -32,7 +32,7 @@ export function StaffLayout() {
     queryFn:  () => feedbackApi.qualityAlertCount(),
     refetchInterval: 30_000,
     refetchOnWindowFocus: true,
-    refetchIntervalInBackground: false,
+    refetchIntervalInBackground: false,  // pause when tab is hidden (Finding #26)
   });
   const qualityCount = alertData?.count ?? 0;
 
@@ -43,21 +43,11 @@ export function StaffLayout() {
   }
 
   return (
-    <div className="agri-bg flex h-screen overflow-hidden">
-
-      {/* ── Narrow icon sidebar ── */}
+    <div className="flex h-screen overflow-hidden">
       <aside
-        className="glass-sidebar flex flex-col items-center py-3 gap-1 shrink-0"
-        style={{ width: 52, minWidth: 52 }}
+        className="flex flex-col items-center py-3 gap-1 border-r border-gray-200 bg-white"
+        style={{ width: 44, minWidth: 44 }}
       >
-        {/* Mini brand mark */}
-        <div
-          className="w-8 h-8 rounded-xl flex items-center justify-center mb-2 shrink-0"
-          style={{ background: "rgba(116, 198, 157, 0.18)", border: "1px solid rgba(116,198,157,0.28)" }}
-        >
-          <Leaf size={13} style={{ color: "#74c69d" }} />
-        </div>
-
         {navItems.map(({ to, icon: Icon, label, alertKey }) => (
           <NavLink
             key={to}
@@ -65,18 +55,14 @@ export function StaffLayout() {
             title={label}
             className={({ isActive }) =>
               cn(
-                "relative w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-150",
+                "relative p-2.5 rounded-md transition-colors",
                 isActive
-                  ? "text-white"
-                  : "text-white/40 hover:text-white/75 hover:bg-white/[0.07]"
+                  ? "bg-[#EAF3DE] text-[#3B6D11]"
+                  : "text-gray-400 hover:bg-gray-100 hover:text-gray-700"
               )
             }
-            style={({ isActive }) => isActive ? {
-              background: "rgba(116, 198, 157, 0.16)",
-              boxShadow: "inset 0 0 0 1px rgba(116,198,157,0.22)",
-            } : {}}
           >
-            <Icon size={17} />
+            <Icon size={18} />
             {alertKey && qualityCount > 0 && (
               <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[8px] font-bold rounded-full min-w-[14px] h-3.5 flex items-center justify-center px-0.5">
                 {qualityCount > 9 ? "9+" : qualityCount}
@@ -90,21 +76,18 @@ export function StaffLayout() {
         <button
           onClick={handleLogout}
           title="Logout"
-          className="w-9 h-9 flex items-center justify-center rounded-xl transition-all text-white/30 hover:text-red-400 hover:bg-red-500/10"
+          className="p-2.5 rounded-md text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
         >
-          <LogOut size={17} />
+          <LogOut size={18} />
         </button>
       </aside>
 
-      {/* ── Content area ── */}
-      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-        <header className="glass-header shrink-0 flex items-center justify-between px-4" style={{ height: 52 }}>
-          <span className="text-sm font-semibold" style={{ color: "rgba(210, 248, 228, 0.90)" }}>
-            {breadcrumb || "Staff Portal"}
-          </span>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <header className="h-11 flex items-center justify-between px-4 border-b border-gray-200 bg-white">
+          <span className="text-sm text-gray-600 font-medium">{breadcrumb || "Staff Portal"}</span>
           <NotificationBell />
         </header>
-        <main className="agri-main flex-1 overflow-y-auto p-5">
+        <main className="flex-1 overflow-y-auto p-5 bg-gray-50">
           <Outlet />
         </main>
       </div>

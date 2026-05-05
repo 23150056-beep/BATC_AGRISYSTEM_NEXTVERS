@@ -23,7 +23,7 @@ const ROLE_COLORS: Record<string, string> = {
 
 export function AnnouncementCard({ announcement, showAudience = false, onDelete, onEdit }: Props) {
   return (
-    <div className="border rounded-xl p-4 shadow-sm space-y-2">
+    <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm space-y-2">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-2.5 flex-1 min-w-0">
           <Megaphone size={15} className="text-[#639922] shrink-0 mt-0.5" />
