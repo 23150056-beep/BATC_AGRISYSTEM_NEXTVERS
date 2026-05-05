@@ -105,10 +105,10 @@ export function AdminLayout() {
         </div>
       </aside>
 
-      {/* Content area — light translucent surface over the gradient */}
+      {/* Content area — translucent sage surface; gradient bleeds through */}
       <div
         className="flex-1 flex flex-col overflow-hidden"
-        style={{ background: "rgba(243, 250, 246, 0.93)" }}
+        style={{ background: "rgba(222, 241, 229, 0.64)" }}
       >
         {/* Frosted glass header */}
         <header className="glass-light-panel h-12 flex items-center justify-between px-5 shrink-0">
@@ -140,7 +140,7 @@ export function AdminLayout() {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-6 bg-transparent">
+        <main className="agri-main flex-1 overflow-y-auto p-6 bg-transparent">
           <Outlet />
         </main>
       </div>

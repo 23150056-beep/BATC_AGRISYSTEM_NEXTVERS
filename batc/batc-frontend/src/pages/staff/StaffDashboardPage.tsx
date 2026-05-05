@@ -3,27 +3,28 @@ import { ClipboardList, Truck, CheckCircle, Clock } from "lucide-react";
 import { dashboardApi } from "@/features/dashboard/api/dashboard.api";
 import { announcementsApi } from "@/features/announcements/api/announcements.api";
 import { AnnouncementCard } from "@/features/announcements/components/AnnouncementCard";
-import { cn } from "@/lib/utils";
+
 
 function StatCard({ label, value, icon: Icon, accent = "green", sublabel }: {
   label: string; value: number; icon: React.ElementType;
   accent?: "green" | "amber" | "blue" | "navy"; sublabel?: string;
 }) {
-  const colors = {
-    green: "bg-[#EAF3DE] text-[#3B6D11]",
-    amber: "bg-amber-50 text-amber-700",
-    blue:  "bg-[#E6F1FB] text-[#0C447C]",
-    navy:  "bg-[#162036]/10 text-[#162036]",
+  const iconColors = {
+    green: { bg: "rgba(52, 168, 83, 0.14)",  color: "#2d6a4f" },
+    amber: { bg: "rgba(212, 160, 23, 0.14)", color: "#b45309" },
+    blue:  { bg: "rgba(12, 68, 124, 0.12)",  color: "#0c447c" },
+    navy:  { bg: "rgba(27, 67, 50, 0.12)",   color: "#1b4332" },
   };
+  const { bg, color } = iconColors[accent];
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-5 flex items-center gap-4 shadow-sm">
-      <div className={cn("p-3 rounded-lg shrink-0", colors[accent])}>
+    <div className="border rounded-xl p-5 flex items-center gap-4 shadow-sm">
+      <div className="p-3 rounded-lg shrink-0" style={{ background: bg, color }}>
         <Icon size={20} />
       </div>
       <div>
-        <p className="text-2xl font-bold text-gray-900 leading-none">{value}</p>
-        <p className="text-sm text-gray-500 mt-1">{label}</p>
-        {sublabel && <p className="text-xs text-gray-400 mt-0.5">{sublabel}</p>}
+        <p className="text-2xl font-bold leading-none" style={{ color: "#1a3d27" }}>{value}</p>
+        <p className="text-sm mt-1" style={{ color: "rgba(30, 70, 45, 0.75)" }}>{label}</p>
+        {sublabel && <p className="text-xs mt-0.5" style={{ color: "rgba(30, 70, 45, 0.50)" }}>{sublabel}</p>}
       </div>
     </div>
   );
@@ -47,8 +48,8 @@ export default function StaffDashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-gray-900">Dashboard</h1>
-        <p className="text-sm text-gray-400">{today}</p>
+        <h1 className="text-xl font-semibold">Dashboard</h1>
+        <p className="text-sm" style={{ color: "rgba(30, 70, 45, 0.55)" }}>{today}</p>
       </div>
 
       {isLoading ? (
@@ -91,7 +92,7 @@ export default function StaffDashboardPage() {
       )}
 
       <div>
-        <h2 className="text-sm font-semibold text-gray-700 mb-3">Announcements</h2>
+        <h2 className="text-sm font-semibold mb-3">Announcements</h2>
         <div className="space-y-3">
           {announcements?.results.slice(0, 5).map((a) => (
             <AnnouncementCard key={a.id} announcement={a} />

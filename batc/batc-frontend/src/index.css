@@ -130,3 +130,55 @@ textarea:focus-visible {
     radial-gradient(ellipse at 75% 80%, rgba(212, 160, 23, 0.18) 0%, transparent 45%),
     linear-gradient(145deg, #071a0e 0%, #1b4332 40%, #2d6a4f 65%, #1a3d2b 100%);
 }
+
+/* ============================================================
+   agri-main — authenticated page content area
+   All "white card" panels inside here automatically become
+   frosted glass so the forest gradient shows through.
+   ============================================================ */
+
+/* Page-level headings — readable forest green on the sage wrapper */
+.agri-main h1 {
+  color: #1a3d27;
+}
+.agri-main h2 {
+  color: #1f4a30;
+}
+
+/* Section sublabels (date, "Awaiting review", etc.) outside cards */
+.agri-main > div > div > p {
+  color: rgba(30, 70, 45, 0.65);
+}
+
+/* ── Auto-glass every rounded bordered panel ── */
+/* Targets: bg-white border border-gray-200 rounded-xl (and rounded-2xl) */
+/* Does NOT affect inputs/buttons (they use rounded-md / rounded-lg without .border) */
+.agri-main .rounded-xl.border,
+.agri-main .rounded-2xl.border {
+  background: rgba(255, 255, 255, 0.76) !important;
+  backdrop-filter: blur(14px) saturate(150%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  border-color: rgba(255, 255, 255, 0.66) !important;
+  box-shadow:
+    0 4px 28px rgba(27, 67, 50, 0.12),
+    0 1px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Pulse skeleton cards inside agri-main */
+.agri-main .rounded-xl.border.animate-pulse,
+.agri-main .rounded-2xl.border.animate-pulse {
+  background: rgba(255, 255, 255, 0.40) !important;
+  backdrop-filter: none !important;
+}
+
+/* Table headers inside glass panels — keep them readable */
+.agri-main .rounded-xl.border thead th,
+.agri-main .rounded-2xl.border thead th {
+  background: rgba(228, 242, 234, 0.85) !important;
+}
+
+/* Table row hover inside glass panels */
+.agri-main .rounded-xl.border tbody tr:hover td,
+.agri-main .rounded-2xl.border tbody tr:hover td {
+  background: rgba(52, 168, 83, 0.06) !important;
+}

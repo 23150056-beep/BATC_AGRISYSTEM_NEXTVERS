@@ -3,7 +3,7 @@ import { Users, ClipboardList, Truck, AlertTriangle, CheckCircle } from "lucide-
 import { dashboardApi } from "@/features/dashboard/api/dashboard.api";
 import { announcementsApi } from "@/features/announcements/api/announcements.api";
 import { AnnouncementCard } from "@/features/announcements/components/AnnouncementCard";
-import { cn } from "@/lib/utils";
+
 
 interface StatCardProps {
   label: string;
@@ -14,23 +14,24 @@ interface StatCardProps {
 }
 
 function StatCard({ label, value, icon: Icon, accent = "green", sublabel }: StatCardProps) {
-  const colors = {
-    green: "bg-[#EAF3DE] text-[#3B6D11]",
-    amber: "bg-amber-50 text-amber-700",
-    blue:  "bg-[#E6F1FB] text-[#0C447C]",
-    navy:  "bg-[#162036]/10 text-[#162036]",
-    red:   "bg-red-50 text-red-700",
+  const iconColors = {
+    green: { bg: "rgba(52, 168, 83, 0.14)",  color: "#2d6a4f" },
+    amber: { bg: "rgba(212, 160, 23, 0.14)", color: "#b45309" },
+    blue:  { bg: "rgba(12, 68, 124, 0.12)",  color: "#0c447c" },
+    navy:  { bg: "rgba(27, 67, 50, 0.12)",   color: "#1b4332" },
+    red:   { bg: "rgba(180, 35, 24, 0.12)",  color: "#b42318" },
   };
+  const { bg, color } = iconColors[accent];
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-5 flex items-center gap-4 shadow-sm">
-      <div className={cn("p-3 rounded-lg shrink-0", colors[accent])}>
+    <div className="border rounded-xl p-5 flex items-center gap-4 shadow-sm">
+      <div className="p-3 rounded-lg shrink-0" style={{ background: bg, color }}>
         <Icon size={20} />
       </div>
       <div>
-        <p className="text-2xl font-bold text-gray-900 leading-none">{value}</p>
-        <p className="text-sm text-gray-500 mt-1">{label}</p>
-        {sublabel && <p className="text-xs text-gray-400 mt-0.5">{sublabel}</p>}
+        <p className="text-2xl font-bold leading-none" style={{ color: "#1a3d27" }}>{value}</p>
+        <p className="text-sm mt-1" style={{ color: "rgba(30, 70, 45, 0.75)" }}>{label}</p>
+        {sublabel && <p className="text-xs mt-0.5" style={{ color: "rgba(30, 70, 45, 0.50)" }}>{sublabel}</p>}
       </div>
     </div>
   );
@@ -53,8 +54,8 @@ export function AdminDashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-gray-900">Dashboard</h1>
-        <p className="text-sm text-gray-400">{today}</p>
+        <h1 className="text-xl font-semibold">Dashboard</h1>
+        <p className="text-sm" style={{ color: "rgba(30, 70, 45, 0.55)" }}>{today}</p>
       </div>
 
       {isLoading ? (
@@ -100,7 +101,7 @@ export function AdminDashboardPage() {
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <div>
-          <h2 className="text-sm font-semibold text-gray-700 mb-3">Recent Announcements</h2>
+          <h2 className="text-sm font-semibold mb-3">Recent Announcements</h2>
           <div className="space-y-3">
             {announcements?.results.slice(0, 3).map((a) => (
               <AnnouncementCard key={a.id} announcement={a} showAudience />
@@ -112,18 +113,18 @@ export function AdminDashboardPage() {
         </div>
 
         <div>
-          <h2 className="text-sm font-semibold text-gray-700 mb-3">Quick Stats</h2>
-          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+          <h2 className="text-sm font-semibold mb-3">Quick Stats</h2>
+          <div className="border rounded-xl overflow-hidden shadow-sm">
             <table className="w-full text-sm">
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y" style={{ borderColor: "rgba(255,255,255,0.40)" }}>
                 {[
                   { label: "Total distributions", value: data?.total_distributions ?? 0 },
                   { label: "Fulfilled applications", value: data?.fulfilled_applications ?? 0 },
                   { label: "Active programs", value: data?.active_programs ?? 0 },
                 ].map(({ label, value }) => (
                   <tr key={label}>
-                    <td className="px-4 py-3 text-gray-600">{label}</td>
-                    <td className="px-4 py-3 text-right font-semibold text-gray-900">{value}</td>
+                    <td className="px-4 py-3" style={{ color: "rgba(30, 70, 45, 0.72)" }}>{label}</td>
+                    <td className="px-4 py-3 text-right font-semibold" style={{ color: "#1a3d27" }}>{value}</td>
                   </tr>
                 ))}
               </tbody>

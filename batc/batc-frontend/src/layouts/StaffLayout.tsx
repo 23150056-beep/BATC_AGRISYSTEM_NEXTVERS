@@ -98,13 +98,13 @@ export function StaffLayout() {
       {/* Content area */}
       <div
         className="flex-1 flex flex-col overflow-hidden"
-        style={{ background: "rgba(243, 250, 246, 0.93)" }}
+        style={{ background: "rgba(222, 241, 229, 0.64)" }}
       >
         <header className="glass-light-panel h-11 flex items-center justify-between px-4 shrink-0">
           <span className="text-sm text-gray-700 font-medium">{breadcrumb || "Staff Portal"}</span>
           <NotificationBell />
         </header>
-        <main className="flex-1 overflow-y-auto p-5 bg-transparent">
+        <main className="agri-main flex-1 overflow-y-auto p-5 bg-transparent">
           <Outlet />
         </main>
       </div>
