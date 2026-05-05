@@ -66,17 +66,15 @@ select:focus-visible, textarea:focus-visible {
    ================================================================ */
 
 /*
-  Admin / Staff: rich LIGHT agricultural gradient.
-  — Vivid green radial glow top-left (morning field light)
-  — Warm wheat-gold radial glow bottom-right (harvest warmth)
-  — Creamy sage base — ALL text colors readable everywhere
+  Admin / Staff: vivid agricultural gradient — saturated enough so glass
+  panels clearly show color tinting through them while text stays readable.
 */
 .agri-bg {
   background:
-    radial-gradient(ellipse 75% 55% at 5%  2%,  rgba(52, 168, 83,  0.32) 0%, transparent 60%),
-    radial-gradient(ellipse 55% 45% at 95% 98%, rgba(212, 160, 23, 0.22) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 40% at 55% 50%, rgba(116, 198, 157, 0.12) 0%, transparent 50%),
-    linear-gradient(145deg, #cce8d4 0%, #dff2e6 22%, #f0f9f2 45%, #fef8e8 68%, #e8f3e4 85%, #d4ecdc 100%);
+    radial-gradient(ellipse 80% 60% at 0%   4%,  rgba(46, 125, 50,  0.52) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 100% 96%, rgba(230, 150, 0,  0.38) 0%, transparent 52%),
+    radial-gradient(ellipse 50% 45% at 55%  50%, rgba(102, 187, 106, 0.22) 0%, transparent 50%),
+    linear-gradient(150deg, #a5d6a7 0%, #c8e6c9 22%, #e8f5e9 44%, #f9fbe7 65%, #dcedc8 82%, #c5e1c5 100%);
 }
 
 /* Farmer / Client: deep forest top → light mint bottom (header is dark, content is light) */
@@ -164,20 +162,20 @@ select:focus-visible, textarea:focus-visible {
 }
 
 /* ── Auto-glass rule ──
-   Targets the exact card pattern used throughout:
-   bg-white  border  border-gray-200  rounded-xl  shadow-sm
-   Inputs / buttons use rounded-md, so they are NOT affected.
+   Targets: bg-white border border-gray-200 rounded-xl shadow-sm
+   Inputs/buttons use rounded-md — NOT affected.
+   NOTE: no border-color override so colored accent borders on
+   stat cards (set via inline style) are preserved.
 */
 .agri-main .rounded-xl.border,
 .agri-main .rounded-2xl.border {
-  background: rgba(255, 255, 255, 0.80) !important;
-  backdrop-filter: blur(18px) saturate(160%);
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
-  border-color: rgba(255, 255, 255, 0.88) !important;
+  background: rgba(255, 255, 255, 0.68) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   box-shadow:
-    0 6px 32px rgba(27, 67, 50, 0.10),
-    0 2px 8px  rgba(0, 0, 0, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
+    0 6px 28px rgba(27, 67, 50, 0.12),
+    0 2px 8px  rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.90) !important;
 }
 
 /* Skeleton pulse cards — lighter, no blur needed */

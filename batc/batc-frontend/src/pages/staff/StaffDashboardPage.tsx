@@ -17,13 +17,14 @@ function StatCard({ label, value, icon: Icon, accent = "green", sublabel }: {
 }) {
   const { bar, icon: iconBg, iconColor } = ACCENT[accent];
   return (
-    <div
-      className="border rounded-xl p-5 flex items-center gap-4 shadow-sm relative overflow-hidden"
-      style={{ borderTop: `3px solid ${bar}` }}
-    >
+    <div className="border rounded-xl p-5 flex items-center gap-4 shadow-sm relative overflow-hidden">
+      <div
+        className="absolute top-0 left-0 right-0 rounded-t-xl"
+        style={{ height: 3, background: bar }}
+      />
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ background: `linear-gradient(135deg, ${bar}08 0%, transparent 60%)` }}
+        style={{ background: `linear-gradient(135deg, ${bar}12 0%, transparent 55%)` }}
       />
       <div className="p-3 rounded-xl shrink-0 relative" style={{ background: iconBg, color: iconColor }}>
         <Icon size={20} />
