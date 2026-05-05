@@ -127,33 +127,39 @@ export function AdminLayout() {
         </div>
       </aside>
 
-      {/* ── Content area ── */}
+      {/* ── Content area — fully transparent so bokeh fills everything ── */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
 
-        {/* Frosted glass header */}
-        <header className="glass-header shrink-0 h-13 flex items-center justify-between px-5" style={{ height: 48 }}>
-          <div className="text-sm font-semibold" style={{ color: "#14362a" }}>{breadcrumb}</div>
-
+        <header className="glass-header shrink-0 flex items-center justify-between px-5" style={{ height: 52 }}>
+          <div
+            className="text-sm font-semibold"
+            style={{ color: "rgba(210, 248, 228, 0.90)" }}
+          >
+            {breadcrumb}
+          </div>
           <div className="flex items-center gap-3">
             <NotificationBell />
             <div
               className="flex items-center gap-2.5 pl-3"
-              style={{ borderLeft: "1px solid rgba(64, 145, 108, 0.18)" }}
+              style={{ borderLeft: "1px solid rgba(116, 198, 157, 0.18)" }}
             >
               <div
                 className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-                style={{ background: "rgba(52, 168, 83, 0.14)", color: "#2d6a4f" }}
+                style={{ background: "rgba(22, 116, 54, 0.30)", border: "1px solid rgba(116,198,157,0.30)", color: "rgba(180,230,205,0.95)" }}
               >
                 {initials}
               </div>
               <div className="text-xs leading-tight">
-                <p className="font-semibold" style={{ color: "#14362a" }}>{fullName || user?.username}</p>
-                <p className="capitalize" style={{ color: "#40916c" }}>{user?.role?.toLowerCase()}</p>
+                <p className="font-semibold" style={{ color: "rgba(230, 252, 240, 0.92)" }}>{fullName || user?.username}</p>
+                <p className="capitalize" style={{ color: "rgba(116, 198, 157, 0.65)" }}>{user?.role?.toLowerCase()}</p>
               </div>
               <button
                 onClick={handleLogout}
                 title="Logout"
-                className="p-1.5 ml-1 rounded-lg transition-all text-gray-400 hover:text-red-500 hover:bg-red-50"
+                className="p-1.5 ml-1 rounded-lg transition-all"
+                style={{ color: "rgba(116,198,157,0.55)" }}
+                onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,120,120,0.85)')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'rgba(116,198,157,0.55)')}
               >
                 <LogOut size={14} />
               </button>

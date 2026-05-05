@@ -5,34 +5,35 @@ import { announcementsApi } from "@/features/announcements/api/announcements.api
 import { AnnouncementCard } from "@/features/announcements/components/AnnouncementCard";
 
 const ACCENT = {
-  green: { bar: "#40916c", icon: "rgba(64, 145, 108, 0.14)", iconColor: "#2d6a4f" },
-  amber: { bar: "#d4a017", icon: "rgba(212, 160, 23, 0.14)", iconColor: "#b45309" },
-  blue:  { bar: "#2563eb", icon: "rgba(37,  99, 235, 0.12)", iconColor: "#1d4ed8" },
-  navy:  { bar: "#1b4332", icon: "rgba(27,  67, 50,  0.13)", iconColor: "#1b4332" },
+  green: { bar: "#22c55e", glow: "rgba(34, 197, 94, 0.22)",  icon: "rgba(34, 197, 94, 0.18)",  iconColor: "#86efac" },
+  amber: { bar: "#f59e0b", glow: "rgba(245, 158, 11, 0.20)", icon: "rgba(245, 158, 11, 0.16)", iconColor: "#fcd34d" },
+  blue:  { bar: "#3b82f6", glow: "rgba(59, 130, 246, 0.18)", icon: "rgba(59, 130, 246, 0.14)", iconColor: "#93c5fd" },
+  teal:  { bar: "#14b8a6", glow: "rgba(20, 184, 166, 0.20)", icon: "rgba(20, 184, 166, 0.16)", iconColor: "#5eead4" },
 };
 
 function StatCard({ label, value, icon: Icon, accent = "green", sublabel }: {
   label: string; value: number; icon: React.ElementType;
-  accent?: "green" | "amber" | "blue" | "navy"; sublabel?: string;
+  accent?: "green" | "amber" | "blue" | "teal"; sublabel?: string;
 }) {
-  const { bar, icon: iconBg, iconColor } = ACCENT[accent];
+  const { bar, glow, icon: iconBg, iconColor } = ACCENT[accent];
   return (
-    <div className="border rounded-xl p-5 flex items-center gap-4 shadow-sm relative overflow-hidden">
-      <div
-        className="absolute top-0 left-0 right-0 rounded-t-xl"
-        style={{ height: 3, background: bar }}
-      />
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{ background: `linear-gradient(135deg, ${bar}12 0%, transparent 55%)` }}
-      />
-      <div className="p-3 rounded-xl shrink-0 relative" style={{ background: iconBg, color: iconColor }}>
-        <Icon size={20} />
+    <div
+      className="border rounded-xl p-5 flex items-center gap-4 shadow-sm relative overflow-hidden"
+      style={{ borderColor: `rgba(255,255,255,0.14)` }}
+    >
+      {/* Colored top accent bar */}
+      <div className="absolute top-0 left-0 right-0" style={{ height: 2, background: bar, opacity: 0.85 }} />
+      {/* Subtle glow tint from accent */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 70% 60% at 20% 50%, ${glow} 0%, transparent 70%)` }} />
+
+      <div className="relative p-3 rounded-xl shrink-0" style={{ background: iconBg }}>
+        <Icon size={22} style={{ color: iconColor }} />
       </div>
+
       <div className="relative">
-        <p className="text-2xl font-bold leading-none" style={{ color: "#14362a" }}>{value}</p>
-        <p className="text-sm mt-1 font-medium" style={{ color: "#2d6a4f" }}>{label}</p>
-        {sublabel && <p className="text-xs mt-0.5" style={{ color: "rgba(45, 106, 79, 0.60)" }}>{sublabel}</p>}
+        <p className="text-3xl font-bold leading-none" style={{ color: "rgba(240,255,245,0.97)" }}>{value}</p>
+        <p className="text-sm mt-1.5 font-medium" style={{ color: "rgba(180,230,205,0.80)" }}>{label}</p>
+        {sublabel && <p className="text-xs mt-0.5" style={{ color: "rgba(140,210,178,0.55)" }}>{sublabel}</p>}
       </div>
     </div>
   );
@@ -57,8 +58,8 @@ export default function StaffDashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-bold">Dashboard</h1>
-        <p className="text-sm mt-0.5" style={{ color: "rgba(45, 106, 79, 0.60)" }}>{today}</p>
+        <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+        <p className="text-sm mt-0.5" style={{ color: "rgba(140, 210, 178, 0.60)" }}>{today}</p>
       </div>
 
       {isLoading ? (
@@ -80,7 +81,7 @@ export default function StaffDashboardPage() {
             label="Today's Distributions"
             value={data?.distributions_today ?? 0}
             icon={Truck}
-            accent="navy"
+            accent="teal"
             sublabel="Total scheduled"
           />
           <StatCard
@@ -107,7 +108,7 @@ export default function StaffDashboardPage() {
             <AnnouncementCard key={a.id} announcement={a} />
           ))}
           {!announcements?.results.length && (
-            <p className="text-sm italic" style={{ color: "rgba(45, 106, 79, 0.50)" }}>No announcements.</p>
+            <p className="text-sm italic">No announcements.</p>
           )}
         </div>
       </div>

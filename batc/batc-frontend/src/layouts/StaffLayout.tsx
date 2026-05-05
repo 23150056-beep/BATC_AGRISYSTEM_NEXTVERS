@@ -98,8 +98,8 @@ export function StaffLayout() {
 
       {/* ── Content area ── */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-        <header className="glass-header shrink-0 flex items-center justify-between px-4" style={{ height: 48 }}>
-          <span className="text-sm font-semibold" style={{ color: "#14362a" }}>
+        <header className="glass-header shrink-0 flex items-center justify-between px-4" style={{ height: 52 }}>
+          <span className="text-sm font-semibold" style={{ color: "rgba(210, 248, 228, 0.90)" }}>
             {breadcrumb || "Staff Portal"}
           </span>
           <NotificationBell />
