@@ -32,7 +32,7 @@ export function StaffLayout() {
     queryFn:  () => feedbackApi.qualityAlertCount(),
     refetchInterval: 30_000,
     refetchOnWindowFocus: true,
-    refetchIntervalInBackground: false,  // pause when tab is hidden (Finding #26)
+    refetchIntervalInBackground: false,
   });
   const qualityCount = alertData?.count ?? 0;
 
@@ -44,21 +44,18 @@ export function StaffLayout() {
 
   return (
     <div className="agri-bg flex h-screen overflow-hidden">
-      {/* Narrow dark forest glass icon sidebar */}
+
+      {/* ── Narrow icon sidebar ── */}
       <aside
-        className="glass-dark flex flex-col items-center py-3 gap-1"
-        style={{
-          width: 44,
-          minWidth: 44,
-          borderRight: "1px solid rgba(116, 198, 157, 0.14)",
-        }}
+        className="glass-sidebar flex flex-col items-center py-3 gap-1 shrink-0"
+        style={{ width: 52, minWidth: 52 }}
       >
-        {/* BATC mini-logo dot */}
+        {/* Mini brand mark */}
         <div
-          className="w-6 h-6 rounded-lg flex items-center justify-center mb-1"
-          style={{ background: "rgba(116, 198, 157, 0.18)" }}
+          className="w-8 h-8 rounded-xl flex items-center justify-center mb-2 shrink-0"
+          style={{ background: "rgba(116, 198, 157, 0.18)", border: "1px solid rgba(116,198,157,0.28)" }}
         >
-          <div className="w-2 h-2 rounded-full" style={{ background: "rgba(116, 198, 157, 0.8)" }} />
+          <Leaf size={13} style={{ color: "#74c69d" }} />
         </div>
 
         {navItems.map(({ to, icon: Icon, label, alertKey }) => (
@@ -68,14 +65,18 @@ export function StaffLayout() {
             title={label}
             className={({ isActive }) =>
               cn(
-                "relative p-2.5 rounded-md transition-all duration-150",
+                "relative w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-150",
                 isActive
-                  ? "bg-white/[0.14] text-white"
-                  : "text-white/45 hover:bg-white/[0.08] hover:text-white/80"
+                  ? "text-white"
+                  : "text-white/40 hover:text-white/75 hover:bg-white/[0.07]"
               )
             }
+            style={({ isActive }) => isActive ? {
+              background: "rgba(116, 198, 157, 0.16)",
+              boxShadow: "inset 0 0 0 1px rgba(116,198,157,0.22)",
+            } : {}}
           >
-            <Icon size={18} />
+            <Icon size={17} />
             {alertKey && qualityCount > 0 && (
               <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[8px] font-bold rounded-full min-w-[14px] h-3.5 flex items-center justify-center px-0.5">
                 {qualityCount > 9 ? "9+" : qualityCount}
@@ -89,22 +90,21 @@ export function StaffLayout() {
         <button
           onClick={handleLogout}
           title="Logout"
-          className="p-2.5 rounded-md transition-all duration-150 text-white/35 hover:bg-red-500/20 hover:text-red-300"
+          className="w-9 h-9 flex items-center justify-center rounded-xl transition-all text-white/30 hover:text-red-400 hover:bg-red-500/10"
         >
-          <LogOut size={18} />
+          <LogOut size={17} />
         </button>
       </aside>
 
-      {/* Content area */}
-      <div
-        className="flex-1 flex flex-col overflow-hidden"
-        style={{ background: "rgba(222, 241, 229, 0.64)" }}
-      >
-        <header className="glass-light-panel h-11 flex items-center justify-between px-4 shrink-0">
-          <span className="text-sm text-gray-700 font-medium">{breadcrumb || "Staff Portal"}</span>
+      {/* ── Content area ── */}
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+        <header className="glass-header shrink-0 flex items-center justify-between px-4" style={{ height: 48 }}>
+          <span className="text-sm font-semibold" style={{ color: "#14362a" }}>
+            {breadcrumb || "Staff Portal"}
+          </span>
           <NotificationBell />
         </header>
-        <main className="agri-main flex-1 overflow-y-auto p-5 bg-transparent">
+        <main className="agri-main flex-1 overflow-y-auto p-5">
           <Outlet />
         </main>
       </div>

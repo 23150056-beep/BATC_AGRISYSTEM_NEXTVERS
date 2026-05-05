@@ -4,7 +4,6 @@ import { dashboardApi } from "@/features/dashboard/api/dashboard.api";
 import { announcementsApi } from "@/features/announcements/api/announcements.api";
 import { AnnouncementCard } from "@/features/announcements/components/AnnouncementCard";
 
-
 interface StatCardProps {
   label: string;
   value: number | string;
@@ -13,25 +12,36 @@ interface StatCardProps {
   sublabel?: string;
 }
 
-function StatCard({ label, value, icon: Icon, accent = "green", sublabel }: StatCardProps) {
-  const iconColors = {
-    green: { bg: "rgba(52, 168, 83, 0.14)",  color: "#2d6a4f" },
-    amber: { bg: "rgba(212, 160, 23, 0.14)", color: "#b45309" },
-    blue:  { bg: "rgba(12, 68, 124, 0.12)",  color: "#0c447c" },
-    navy:  { bg: "rgba(27, 67, 50, 0.12)",   color: "#1b4332" },
-    red:   { bg: "rgba(180, 35, 24, 0.12)",  color: "#b42318" },
-  };
-  const { bg, color } = iconColors[accent];
+const ACCENT = {
+  green: { bar: "#40916c", icon: "rgba(64, 145, 108, 0.14)", iconColor: "#2d6a4f" },
+  amber: { bar: "#d4a017", icon: "rgba(212, 160, 23, 0.14)", iconColor: "#b45309" },
+  blue:  { bar: "#2563eb", icon: "rgba(37,  99, 235, 0.12)", iconColor: "#1d4ed8" },
+  navy:  { bar: "#1b4332", icon: "rgba(27,  67, 50,  0.13)", iconColor: "#1b4332" },
+  red:   { bar: "#dc2626", icon: "rgba(220, 38, 38,  0.12)", iconColor: "#b91c1c" },
+};
 
+function StatCard({ label, value, icon: Icon, accent = "green", sublabel }: StatCardProps) {
+  const { bar, icon: iconBg, iconColor } = ACCENT[accent];
   return (
-    <div className="border rounded-xl p-5 flex items-center gap-4 shadow-sm">
-      <div className="p-3 rounded-lg shrink-0" style={{ background: bg, color }}>
+    <div
+      className="border rounded-xl p-5 flex items-center gap-4 shadow-sm relative overflow-hidden"
+      style={{ borderTop: `3px solid ${bar}` }}
+    >
+      {/* Subtle background tint matching accent */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: `linear-gradient(135deg, ${bar}08 0%, transparent 60%)` }}
+      />
+      <div
+        className="p-3 rounded-xl shrink-0 relative"
+        style={{ background: iconBg, color: iconColor }}
+      >
         <Icon size={20} />
       </div>
-      <div>
-        <p className="text-2xl font-bold leading-none" style={{ color: "#1a3d27" }}>{value}</p>
-        <p className="text-sm mt-1" style={{ color: "rgba(30, 70, 45, 0.75)" }}>{label}</p>
-        {sublabel && <p className="text-xs mt-0.5" style={{ color: "rgba(30, 70, 45, 0.50)" }}>{sublabel}</p>}
+      <div className="relative">
+        <p className="text-2xl font-bold leading-none" style={{ color: "#14362a" }}>{value}</p>
+        <p className="text-sm mt-1 font-medium" style={{ color: "#2d6a4f" }}>{label}</p>
+        {sublabel && <p className="text-xs mt-0.5" style={{ color: "rgba(45, 106, 79, 0.60)" }}>{sublabel}</p>}
       </div>
     </div>
   );
@@ -49,25 +59,27 @@ export function AdminDashboardPage() {
     queryFn: () => announcementsApi.list(),
   });
 
-  const today = new Date().toLocaleDateString("en-PH", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+  const today = new Date().toLocaleDateString("en-PH", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric",
+  });
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold">Dashboard</h1>
-        <p className="text-sm" style={{ color: "rgba(30, 70, 45, 0.55)" }}>{today}</p>
+        <h1 className="text-xl font-bold">Dashboard</h1>
+        <p className="text-sm mt-0.5" style={{ color: "rgba(45, 106, 79, 0.60)" }}>{today}</p>
       </div>
 
       {isLoading ? (
         <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="bg-white border border-gray-200 rounded-xl p-5 h-24 animate-pulse" />
+            <div key={i} className="border rounded-xl p-5 h-24 animate-pulse" />
           ))}
         </div>
       ) : (
         <div className="grid grid-cols-2 xl:grid-cols-3 gap-4">
-          <StatCard label="Total Farmers" value={data?.total_farmers ?? 0} icon={Users} accent="green" />
-          <StatCard label="Active Programs" value={data?.active_programs ?? 0} icon={ClipboardList} accent="blue" />
+          <StatCard label="Total Farmers"        value={data?.total_farmers ?? 0}       icon={Users}         accent="green" />
+          <StatCard label="Active Programs"       value={data?.active_programs ?? 0}     icon={ClipboardList} accent="blue"  />
           <StatCard
             label="Pending Applications"
             value={data?.pending_applications ?? 0}
@@ -107,7 +119,7 @@ export function AdminDashboardPage() {
               <AnnouncementCard key={a.id} announcement={a} showAudience />
             ))}
             {!announcements?.results.length && (
-              <p className="text-sm text-gray-400 italic">No announcements yet.</p>
+              <p className="text-sm italic" style={{ color: "rgba(45, 106, 79, 0.50)" }}>No announcements yet.</p>
             )}
           </div>
         </div>
@@ -116,15 +128,18 @@ export function AdminDashboardPage() {
           <h2 className="text-sm font-semibold mb-3">Quick Stats</h2>
           <div className="border rounded-xl overflow-hidden shadow-sm">
             <table className="w-full text-sm">
-              <tbody className="divide-y" style={{ borderColor: "rgba(255,255,255,0.40)" }}>
+              <tbody>
                 {[
-                  { label: "Total distributions", value: data?.total_distributions ?? 0 },
-                  { label: "Fulfilled applications", value: data?.fulfilled_applications ?? 0 },
-                  { label: "Active programs", value: data?.active_programs ?? 0 },
-                ].map(({ label, value }) => (
-                  <tr key={label}>
-                    <td className="px-4 py-3" style={{ color: "rgba(30, 70, 45, 0.72)" }}>{label}</td>
-                    <td className="px-4 py-3 text-right font-semibold" style={{ color: "#1a3d27" }}>{value}</td>
+                  { label: "Total distributions",    value: data?.total_distributions   ?? 0 },
+                  { label: "Fulfilled applications",  value: data?.fulfilled_applications ?? 0 },
+                  { label: "Active programs",         value: data?.active_programs        ?? 0 },
+                ].map(({ label, value }, i) => (
+                  <tr
+                    key={label}
+                    style={{ borderTop: i > 0 ? "1px solid rgba(64, 145, 108, 0.10)" : "none" }}
+                  >
+                    <td className="px-5 py-3.5" style={{ color: "rgba(45, 106, 79, 0.75)" }}>{label}</td>
+                    <td className="px-5 py-3.5 text-right font-bold" style={{ color: "#14362a" }}>{value}</td>
                   </tr>
                 ))}
               </tbody>

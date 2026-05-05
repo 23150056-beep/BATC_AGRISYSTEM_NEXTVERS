@@ -10,7 +10,7 @@
   --color-batc-navy-text: #8aa0bb;
   --color-batc-navy-text-active: #e8f0e0;
 
-  /* === Semantic tokens (from improvement plan) === */
+  /* === Semantic tokens === */
   --color-brand-600: #3b6d11;
   --color-brand-500: #639922;
   --color-brand-100: #eaf3de;
@@ -42,12 +42,9 @@
   --color-agri-50:  #f0f7ee;
   --color-agri-wheat: #d4a017;
   --color-agri-amber: #b45309;
-  --color-agri-earth: #7c4a1e;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -56,129 +53,162 @@ body {
   color: #1f2937;
 }
 
-#root {
-  min-height: 100svh;
+#root { min-height: 100svh; }
+
+:focus-visible { outline: 2px solid var(--color-agri-500); outline-offset: 2px; }
+button:focus-visible, a:focus-visible, input:focus-visible,
+select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--color-agri-500); outline-offset: 2px;
 }
 
-/* Visible focus ring for accessibility (replaces browser blue) */
-:focus-visible {
-  outline: 2px solid var(--color-brand-600);
-  outline-offset: 2px;
-}
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid var(--color-brand-600);
-  outline-offset: 2px;
-}
+/* ================================================================
+   BACKGROUNDS
+   ================================================================ */
 
-/* =============================================
-   Agriculture Glassmorphism Utility Classes
-   ============================================= */
-
-/* Dark forest glass — used for sidebars on dark backgrounds */
-.glass-dark {
-  background: rgba(10, 28, 18, 0.76);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-}
-
-/* Frosted light glass — used for headers, cards on dark backgrounds */
-.glass-light-panel {
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-  border-bottom: 1px solid rgba(52, 168, 83, 0.14);
-}
-
-/* Heavy frost glass — used for login card, prominent panels */
-.glass-card {
-  background: rgba(255, 255, 255, 0.70);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.80);
-  box-shadow: 0 8px 40px rgba(10, 28, 18, 0.22), 0 2px 8px rgba(10, 28, 18, 0.08);
-}
-
-/* Bottom nav frosted glass */
-.glass-nav-bottom {
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border-top: 1px solid rgba(116, 198, 157, 0.22);
-}
-
-/* App backgrounds */
+/*
+  Admin / Staff: rich LIGHT agricultural gradient.
+  — Vivid green radial glow top-left (morning field light)
+  — Warm wheat-gold radial glow bottom-right (harvest warmth)
+  — Creamy sage base — ALL text colors readable everywhere
+*/
 .agri-bg {
   background:
-    radial-gradient(ellipse at 20% 0%, rgba(64, 145, 108, 0.35) 0%, transparent 55%),
-    radial-gradient(ellipse at 80% 100%, rgba(45, 106, 79, 0.25) 0%, transparent 55%),
-    linear-gradient(155deg, #071a0e 0%, #1b4332 38%, #2d6a4f 68%, #1a3d2b 100%);
+    radial-gradient(ellipse 75% 55% at 5%  2%,  rgba(52, 168, 83,  0.32) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 45% at 95% 98%, rgba(212, 160, 23, 0.22) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 55% 50%, rgba(116, 198, 157, 0.12) 0%, transparent 50%),
+    linear-gradient(145deg, #cce8d4 0%, #dff2e6 22%, #f0f9f2 45%, #fef8e8 68%, #e8f3e4 85%, #d4ecdc 100%);
 }
 
+/* Farmer / Client: deep forest top → light mint bottom (header is dark, content is light) */
 .agri-bg-client {
   background:
-    radial-gradient(ellipse at 50% 0%, rgba(116, 198, 157, 0.3) 0%, transparent 60%),
-    linear-gradient(180deg, #1b4332 0%, #2d6a4f 35%, #52b788 75%, #d8f3dc 100%);
+    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(27, 67, 50, 0.9) 0%, transparent 50%),
+    linear-gradient(180deg, #0f2d18 0%, #1b4332 20%, #2d6a4f 42%, #52b788 68%, #b7e4c7 85%, #e8f5e0 100%);
 }
 
+/* Login: richest dark gradient — dramatic backdrop for the glass card */
 .agri-bg-login {
   background:
-    radial-gradient(ellipse at 30% 20%, rgba(64, 145, 108, 0.45) 0%, transparent 50%),
-    radial-gradient(ellipse at 75% 80%, rgba(212, 160, 23, 0.18) 0%, transparent 45%),
-    linear-gradient(145deg, #071a0e 0%, #1b4332 40%, #2d6a4f 65%, #1a3d2b 100%);
+    radial-gradient(ellipse 70% 60% at 20% 15%, rgba(52, 168, 83,  0.45) 0%, transparent 55%),
+    radial-gradient(ellipse 55% 45% at 80% 85%, rgba(212, 160, 23, 0.22) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 35% at 65% 35%, rgba(116, 198, 157, 0.18) 0%, transparent 45%),
+    linear-gradient(145deg, #071a0e 0%, #112b1c 28%, #1b4332 52%, #2a6049 75%, #1a3d2b 100%);
 }
 
-/* ============================================================
-   agri-main — authenticated page content area
-   All "white card" panels inside here automatically become
-   frosted glass so the forest gradient shows through.
-   ============================================================ */
+/* ================================================================
+   GLASS SURFACES
+   ================================================================ */
 
-/* Page-level headings — readable forest green on the sage wrapper */
+/* Deep forest sidebar — solid dark gradient, rich glow */
+.glass-sidebar {
+  background: linear-gradient(180deg, #071a0e 0%, #0d2416 35%, #163828 70%, #1b4332 100%);
+  box-shadow: 4px 0 32px rgba(0, 0, 0, 0.22), inset -1px 0 0 rgba(116, 198, 157, 0.14);
+}
+
+/* Frosted header on LIGHT backgrounds */
+.glass-header {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  border-bottom: 1px solid rgba(64, 145, 108, 0.14);
+  box-shadow: 0 1px 16px rgba(27, 67, 50, 0.07);
+}
+
+/* Frosted header on DARK backgrounds (client) */
+.glass-header-dark {
+  background: rgba(10, 28, 18, 0.72);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(116, 198, 157, 0.18);
+}
+
+/* Login card — heavy frost, strong depth */
+.glass-card {
+  background: rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    0 20px 60px rgba(7, 26, 14, 0.30),
+    0 8px 24px rgba(7, 26, 14, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+/* Bottom nav — white frosted glass */
+.glass-nav-bottom {
+  background: rgba(255, 255, 255, 0.90);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border-top: 1px solid rgba(64, 145, 108, 0.16);
+  box-shadow: 0 -4px 24px rgba(27, 67, 50, 0.10);
+}
+
+/* ================================================================
+   agri-main — authenticated page content
+   Auto-glasses every white bordered rounded panel.
+   Light background = all text fully readable.
+   ================================================================ */
+
+.agri-main {
+  background: transparent;
+}
+
+/* Page title */
 .agri-main h1 {
-  color: #1a3d27;
+  color: #14362a;
 }
+
+/* Section labels */
 .agri-main h2 {
-  color: #1f4a30;
+  color: #1c4a32;
 }
 
-/* Section sublabels (date, "Awaiting review", etc.) outside cards */
-.agri-main > div > div > p {
-  color: rgba(30, 70, 45, 0.65);
-}
-
-/* ── Auto-glass every rounded bordered panel ── */
-/* Targets: bg-white border border-gray-200 rounded-xl (and rounded-2xl) */
-/* Does NOT affect inputs/buttons (they use rounded-md / rounded-lg without .border) */
+/* ── Auto-glass rule ──
+   Targets the exact card pattern used throughout:
+   bg-white  border  border-gray-200  rounded-xl  shadow-sm
+   Inputs / buttons use rounded-md, so they are NOT affected.
+*/
 .agri-main .rounded-xl.border,
 .agri-main .rounded-2xl.border {
-  background: rgba(255, 255, 255, 0.76) !important;
-  backdrop-filter: blur(14px) saturate(150%);
-  -webkit-backdrop-filter: blur(14px) saturate(150%);
-  border-color: rgba(255, 255, 255, 0.66) !important;
+  background: rgba(255, 255, 255, 0.80) !important;
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border-color: rgba(255, 255, 255, 0.88) !important;
   box-shadow:
-    0 4px 28px rgba(27, 67, 50, 0.12),
-    0 1px 4px rgba(0, 0, 0, 0.05) !important;
+    0 6px 32px rgba(27, 67, 50, 0.10),
+    0 2px 8px  rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
 }
 
-/* Pulse skeleton cards inside agri-main */
+/* Skeleton pulse cards — lighter, no blur needed */
 .agri-main .rounded-xl.border.animate-pulse,
 .agri-main .rounded-2xl.border.animate-pulse {
-  background: rgba(255, 255, 255, 0.40) !important;
+  background: rgba(255, 255, 255, 0.45) !important;
   backdrop-filter: none !important;
+  box-shadow: none !important;
 }
 
-/* Table headers inside glass panels — keep them readable */
+/* Table header rows inside glass cards */
+.agri-main .rounded-xl.border thead,
+.agri-main .rounded-2xl.border thead {
+  background: rgba(220, 240, 228, 0.70) !important;
+}
+
 .agri-main .rounded-xl.border thead th,
 .agri-main .rounded-2xl.border thead th {
-  background: rgba(228, 242, 234, 0.85) !important;
+  color: #1c4a32 !important;
+  font-weight: 600 !important;
+  background: transparent !important;
 }
 
-/* Table row hover inside glass panels */
-.agri-main .rounded-xl.border tbody tr:hover td,
-.agri-main .rounded-2xl.border tbody tr:hover td {
-  background: rgba(52, 168, 83, 0.06) !important;
+/* Table row dividers */
+.agri-main .rounded-xl.border tbody tr,
+.agri-main .rounded-2xl.border tbody tr {
+  border-color: rgba(64, 145, 108, 0.08) !important;
+}
+
+/* Table row hover */
+.agri-main .rounded-xl.border tbody tr:hover,
+.agri-main .rounded-2xl.border tbody tr:hover {
+  background: rgba(52, 168, 83, 0.05) !important;
 }
