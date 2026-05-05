@@ -40,7 +40,7 @@ export function ClientLayout() {
             <p className="text-[11px] font-bold tracking-widest uppercase leading-none"
                style={{ color: "rgba(200, 235, 215, 0.95)" }}>BATC</p>
             {user?.first_name && (
-              <p className="text-[10px] leading-none mt-0.5" style={{ color: "rgba(116, 198, 157, 0.55)" }}>
+              <p className="text-[10px] leading-none mt-0.5" style={{ color: "rgba(155, 218, 185, 0.88)" }}>
                 Hi, {user.first_name}
               </p>
             )}
@@ -52,7 +52,7 @@ export function ClientLayout() {
             onClick={handleLogout}
             title="Logout"
             className="p-2 rounded-xl transition-colors"
-            style={{ color: "rgba(116, 198, 157, 0.55)" }}
+            style={{ color: "rgba(155, 218, 185, 0.80)" }}
           >
             <LogOut size={16} />
           </button>
@@ -72,12 +72,12 @@ export function ClientLayout() {
             className={({ isActive }) =>
               cn(
                 "flex-1 flex flex-col items-center justify-center py-2 gap-1 text-[10px] font-medium transition-all duration-150 min-h-[52px]",
-                isActive ? "" : "text-gray-400 hover:text-gray-600"
+                isActive ? "" : "hover:brightness-125"
               )
             }
             style={({ isActive }) => isActive
-              ? { color: "var(--color-agri-600)" }
-              : {}
+              ? { color: "rgba(116, 198, 157, 1)" }
+              : { color: "rgba(175, 225, 200, 0.68)" }
             }
           >
             {({ isActive }) => (

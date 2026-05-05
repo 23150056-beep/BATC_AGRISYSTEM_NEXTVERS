@@ -31,9 +31,9 @@ function StatCard({ label, value, icon: Icon, accent = "green", sublabel }: {
       </div>
 
       <div className="relative">
-        <p className="text-3xl font-bold leading-none" style={{ color: "rgba(240,255,245,0.97)" }}>{value}</p>
-        <p className="text-sm mt-1.5 font-medium" style={{ color: "rgba(180,230,205,0.80)" }}>{label}</p>
-        {sublabel && <p className="text-xs mt-0.5" style={{ color: "rgba(140,210,178,0.55)" }}>{sublabel}</p>}
+        <p className="text-3xl font-bold leading-none" style={{ color: "rgba(242,255,247,0.99)" }}>{value}</p>
+        <p className="text-sm mt-1.5 font-medium" style={{ color: "rgba(200,240,218,0.95)" }}>{label}</p>
+        {sublabel && <p className="text-xs mt-0.5" style={{ color: "rgba(185,228,205,0.82)" }}>{sublabel}</p>}
       </div>
     </div>
   );
@@ -59,7 +59,7 @@ export default function StaffDashboardPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-sm mt-0.5" style={{ color: "rgba(140, 210, 178, 0.60)" }}>{today}</p>
+        <p className="text-sm mt-0.5" style={{ color: "rgba(185, 228, 205, 0.85)" }}>{today}</p>
       </div>
 
       {isLoading ? (

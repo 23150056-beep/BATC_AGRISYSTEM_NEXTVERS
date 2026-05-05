@@ -69,7 +69,7 @@ export function AdminLayout() {
             </div>
             <div>
               <p className="text-xs font-bold tracking-widest uppercase" style={{ color: "rgba(200, 235, 215, 0.95)" }}>BATC</p>
-              <p className="text-[9px] leading-none" style={{ color: "rgba(116, 198, 157, 0.50)" }}>AgriSystem</p>
+              <p className="text-[9px] leading-none" style={{ color: "rgba(140, 210, 175, 0.78)" }}>AgriSystem</p>
             </div>
           </div>
         </div>
@@ -151,7 +151,7 @@ export function AdminLayout() {
               </div>
               <div className="text-xs leading-tight">
                 <p className="font-semibold" style={{ color: "rgba(230, 252, 240, 0.92)" }}>{fullName || user?.username}</p>
-                <p className="capitalize" style={{ color: "rgba(116, 198, 157, 0.65)" }}>{user?.role?.toLowerCase()}</p>
+                <p className="capitalize" style={{ color: "rgba(140, 210, 175, 0.88)" }}>{user?.role?.toLowerCase()}</p>
               </div>
               <button
                 onClick={handleLogout}

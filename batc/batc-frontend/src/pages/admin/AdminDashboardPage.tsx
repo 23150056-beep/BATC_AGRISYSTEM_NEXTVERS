@@ -37,9 +37,9 @@ function StatCard({ label, value, icon: Icon, accent = "green", sublabel }: Stat
       </div>
 
       <div className="relative">
-        <p className="text-3xl font-bold leading-none" style={{ color: "rgba(240,255,245,0.97)" }}>{value}</p>
-        <p className="text-sm mt-1.5 font-medium" style={{ color: "rgba(180,230,205,0.80)" }}>{label}</p>
-        {sublabel && <p className="text-xs mt-0.5" style={{ color: "rgba(140,210,178,0.55)" }}>{sublabel}</p>}
+        <p className="text-3xl font-bold leading-none" style={{ color: "rgba(242,255,247,0.99)" }}>{value}</p>
+        <p className="text-sm mt-1.5 font-medium" style={{ color: "rgba(200,240,218,0.95)" }}>{label}</p>
+        {sublabel && <p className="text-xs mt-0.5" style={{ color: "rgba(185,228,205,0.82)" }}>{sublabel}</p>}
       </div>
     </div>
   );
@@ -65,7 +65,7 @@ export function AdminDashboardPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-sm mt-0.5" style={{ color: "rgba(140, 210, 178, 0.60)" }}>{today}</p>
+        <p className="text-sm mt-0.5" style={{ color: "rgba(185, 228, 205, 0.85)" }}>{today}</p>
       </div>
 
       {isLoading ? (
@@ -133,8 +133,8 @@ export function AdminDashboardPage() {
                   { label: "Active programs",         value: data?.active_programs        ?? 0 },
                 ].map(({ label, value }, i) => (
                   <tr key={label} style={{ borderTop: i > 0 ? "1px solid rgba(255,255,255,0.07)" : "none" }}>
-                    <td className="px-5 py-3.5" style={{ color: "rgba(180,230,205,0.75)" }}>{label}</td>
-                    <td className="px-5 py-3.5 text-right font-bold" style={{ color: "rgba(240,255,245,0.96)" }}>{value}</td>
+                    <td className="px-5 py-3.5" style={{ color: "rgba(200,240,218,0.92)" }}>{label}</td>
+                    <td className="px-5 py-3.5 text-right font-bold" style={{ color: "rgba(242,255,247,0.99)" }}>{value}</td>
                   </tr>
                 ))}
               </tbody>

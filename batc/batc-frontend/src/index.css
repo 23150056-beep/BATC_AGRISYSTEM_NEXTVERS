@@ -149,36 +149,36 @@ body {
    ═══════════════════════════════════════════════════════════════ */
 
 .agri-main {
-  /* Default text color: light sage for on-dark content */
-  color: rgba(210, 240, 225, 0.80);
+  /* Default text color: bright light sage for on-dark content */
+  color: rgba(220, 248, 232, 0.94);
 }
 
 /* ── Page-level titles (outside glass cards, on dark bokeh) ── */
 .agri-main h1 {
-  color: rgba(240, 255, 245, 0.97) !important;
+  color: rgba(240, 255, 245, 0.98) !important;
   text-shadow: 0 1px 20px rgba(22, 116, 54, 0.40);
 }
 .agri-main h2 {
-  color: rgba(225, 250, 235, 0.90) !important;
+  color: rgba(230, 252, 238, 0.96) !important;
 }
 .agri-main h3 {
-  color: rgba(210, 245, 225, 0.85) !important;
+  color: rgba(220, 248, 232, 0.94) !important;
 }
 
-/* ── Override Tailwind gray classes → light equivalents ── */
+/* ── Override Tailwind gray classes → bright light equivalents ── */
 /* These apply everywhere in agri-main — cards, tables, labels  */
 .agri-main .text-gray-900,
-.agri-main .text-gray-800 { color: rgba(240, 255, 245, 0.95) !important; }
+.agri-main .text-gray-800 { color: rgba(240, 255, 245, 0.98) !important; }
 
 .agri-main .text-gray-700,
-.agri-main .text-gray-600 { color: rgba(210, 240, 225, 0.82) !important; }
+.agri-main .text-gray-600 { color: rgba(220, 245, 232, 0.94) !important; }
 
-.agri-main .text-gray-500 { color: rgba(175, 220, 200, 0.70) !important; }
+.agri-main .text-gray-500 { color: rgba(200, 235, 215, 0.88) !important; }
 
-.agri-main .text-gray-400 { color: rgba(145, 205, 178, 0.58) !important; }
+.agri-main .text-gray-400 { color: rgba(180, 225, 200, 0.80) !important; }
 
 /* italic empty-state text */
-.agri-main .italic { color: rgba(150, 210, 180, 0.55) !important; }
+.agri-main .italic { color: rgba(185, 228, 205, 0.82) !important; }
 
 /* ── Auto-glass all white bordered rounded panels ──
    bg-white border border-gray-200 rounded-xl → frosted glass panel
@@ -211,7 +211,7 @@ body {
 }
 .agri-main .rounded-xl.border thead th,
 .agri-main .rounded-2xl.border thead th {
-  color: rgba(180, 230, 205, 0.92) !important;
+  color: rgba(200, 240, 218, 0.97) !important;
   font-weight: 600 !important;
   background: transparent !important;
 }
@@ -234,7 +234,7 @@ body {
 }
 .agri-main input::placeholder,
 .agri-main textarea::placeholder {
-  color: rgba(180, 220, 200, 0.40) !important;
+  color: rgba(170, 215, 192, 0.55) !important;
 }
 .agri-main select option {
   background: #0d2418;
@@ -245,5 +245,30 @@ body {
 .agri-main button.border,
 .agri-main a.border {
   border-color: rgba(255, 255, 255, 0.20) !important;
-  color: rgba(210, 245, 225, 0.88) !important;
+  color: rgba(210, 245, 225, 0.92) !important;
 }
+
+/* ── Badge / pill text ── */
+.agri-main .text-muted-foreground { color: rgba(190, 232, 210, 0.85) !important; }
+.agri-main .text-foreground       { color: rgba(235, 252, 242, 0.97) !important; }
+
+/* ── Status badge text — keep semantic colors but boost brightness ── */
+.agri-main .text-green-700  { color: rgba(134, 239, 172, 0.97) !important; }
+.agri-main .text-green-800  { color: rgba(134, 239, 172, 0.97) !important; }
+.agri-main .text-yellow-700 { color: rgba(253, 224, 71,  0.97) !important; }
+.agri-main .text-yellow-800 { color: rgba(253, 224, 71,  0.97) !important; }
+.agri-main .text-amber-700  { color: rgba(252, 211, 77,  0.97) !important; }
+.agri-main .text-red-700    { color: rgba(252, 165, 165, 0.97) !important; }
+.agri-main .text-red-800    { color: rgba(252, 165, 165, 0.97) !important; }
+.agri-main .text-blue-700   { color: rgba(147, 197, 253, 0.97) !important; }
+.agri-main .text-blue-800   { color: rgba(147, 197, 253, 0.97) !important; }
+.agri-main .text-purple-700 { color: rgba(216, 180, 254, 0.97) !important; }
+
+/* ── Status badge backgrounds — darken light pastels for glass theme ── */
+.agri-main .bg-green-100    { background: rgba(34,  197, 94,  0.20) !important; }
+.agri-main .bg-yellow-100   { background: rgba(234, 179, 8,   0.20) !important; }
+.agri-main .bg-amber-100    { background: rgba(245, 158, 11,  0.20) !important; }
+.agri-main .bg-red-100      { background: rgba(239, 68,  68,  0.20) !important; }
+.agri-main .bg-blue-100     { background: rgba(59,  130, 246, 0.20) !important; }
+.agri-main .bg-purple-100   { background: rgba(168, 85,  247, 0.20) !important; }
+.agri-main .bg-gray-100     { background: rgba(255, 255, 255, 0.10) !important; }
