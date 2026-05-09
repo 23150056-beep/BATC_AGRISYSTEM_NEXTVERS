@@ -12,3 +12,9 @@ _bugs.txt
 # OS
 .DS_Store
 Thumbs.db
+
+# Raw wiki sources — large binaries (markdown clippings are committed)
+raw/*.pdf
+raw/*.docx
+raw/*.xlsx
+raw/*.zip
