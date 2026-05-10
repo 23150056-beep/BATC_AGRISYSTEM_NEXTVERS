@@ -1,4 +1,5 @@
 import { ReportDownloadBar } from "@/features/reports/components/ReportDownloadBar";
+import { PageHeader } from "@/components/ui";
 
 const DIST_STATUSES = [
   "SCHEDULED","DELIVERED","DELAYED","RESCHEDULED","OUT_OF_STOCK","UNAVAILABLE"
@@ -7,11 +8,10 @@ const DIST_STATUSES = [
 export default function StaffReportsPage() {
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-xl font-semibold text-gray-900">Reports</h1>
-        <p className="text-sm text-gray-500">Download CSV reports.</p>
-      </div>
-
+      <PageHeader
+        title="Reports"
+        description="Download CSV reports for distributions and farmers."
+      />
       <div className="space-y-4 max-w-2xl">
         <ReportDownloadBar
           title="Farmers Report"

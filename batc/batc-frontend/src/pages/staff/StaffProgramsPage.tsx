@@ -1,12 +1,13 @@
 import { ProgramsTable } from "@/features/programs/components/ProgramsTable";
+import { PageHeader } from "@/components/ui";
 
 export default function StaffProgramsPage() {
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-xl font-semibold text-gray-900">Programs</h1>
-        <p className="text-sm text-gray-500">Browse active agricultural assistance programs.</p>
-      </div>
+      <PageHeader
+        title="Programs"
+        description="Browse active agricultural assistance programs."
+      />
       <ProgramsTable isAdmin={false} />
     </div>
   );

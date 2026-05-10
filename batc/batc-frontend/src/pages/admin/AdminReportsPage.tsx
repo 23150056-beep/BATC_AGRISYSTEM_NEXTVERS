@@ -1,4 +1,5 @@
 import { ReportDownloadBar } from "@/features/reports/components/ReportDownloadBar";
+import { PageHeader } from "@/components/ui";
 
 const LIVELIHOOD_OPTIONS = [
   "RICE","CORN","VEGETABLE","FRUIT","LIVESTOCK","POULTRY","FISHERY","OTHER"
@@ -11,11 +12,10 @@ const DIST_STATUSES = [
 export default function AdminReportsPage() {
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-xl font-semibold text-gray-900">Reports</h1>
-        <p className="text-sm text-gray-500">Download CSV reports for farmers, distributions, and inventory.</p>
-      </div>
-
+      <PageHeader
+        title="Reports"
+        description="Download CSV reports for farmers, distributions, and inventory."
+      />
       <div className="space-y-4 max-w-2xl">
         <ReportDownloadBar
           title="Farmers Report"
