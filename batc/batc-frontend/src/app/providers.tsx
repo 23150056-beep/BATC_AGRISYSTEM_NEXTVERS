@@ -8,7 +8,18 @@ export function Providers() {
   return (
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
-      <Toaster position="top-right" richColors />
+      <Toaster
+        position="top-right"
+        richColors
+        closeButton
+        expand
+        duration={4000}
+        toastOptions={{
+          classNames: {
+            toast: "rounded-lg border shadow-md text-sm font-medium",
+          },
+        }}
+      />
     </QueryClientProvider>
   );
 }

@@ -1,31 +1,53 @@
 import { useQuery } from "@tanstack/react-query";
-import { ClipboardList, Truck, CheckCircle, Clock } from "lucide-react";
+import { ClipboardList, Truck, CheckCircle, Clock, ArrowUpRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { dashboardApi } from "@/features/dashboard/api/dashboard.api";
 import { announcementsApi } from "@/features/announcements/api/announcements.api";
 import { AnnouncementCard } from "@/features/announcements/components/AnnouncementCard";
+import { EmptyState, SkeletonStat, PageHeader, Card } from "@/components/ui";
 import { cn } from "@/lib/utils";
 
-function StatCard({ label, value, icon: Icon, accent = "green", sublabel }: {
-  label: string; value: number; icon: React.ElementType;
-  accent?: "green" | "amber" | "blue" | "navy"; sublabel?: string;
-}) {
-  const colors = {
-    green: "bg-[#EAF3DE] text-[#3B6D11]",
-    amber: "bg-amber-50 text-amber-700",
-    blue:  "bg-[#E6F1FB] text-[#0C447C]",
-    navy:  "bg-[#162036]/10 text-[#162036]",
-  };
-  return (
-    <div className="bg-white border border-gray-200 rounded-xl p-5 flex items-center gap-4 shadow-sm">
-      <div className={cn("p-3 rounded-lg shrink-0", colors[accent])}>
+const ACCENT = {
+  green: "bg-[#EAF3DE] text-[#3B6D11]",
+  amber: "bg-amber-50  text-amber-700",
+  blue:  "bg-[#E6F1FB] text-[#0C447C]",
+  navy:  "bg-[#162036]/8 text-[#162036]",
+};
+
+interface StatCardProps {
+  label: string;
+  value: number;
+  icon: React.ElementType;
+  accent?: keyof typeof ACCENT;
+  sublabel?: string;
+  to?: string;
+}
+
+function StatCard({ label, value, icon: Icon, accent = "green", sublabel, to }: StatCardProps) {
+  const content = (
+    <div className="bg-white border border-gray-200 rounded-xl p-5 flex items-center gap-4 shadow-sm hover:shadow-md hover:border-gray-300 transition-all group">
+      <div className={cn("p-3 rounded-lg shrink-0", ACCENT[accent])} aria-hidden="true">
         <Icon size={20} />
       </div>
-      <div>
+      <div className="flex-1 min-w-0">
         <p className="text-2xl font-bold text-gray-900 leading-none">{value}</p>
         <p className="text-sm text-gray-500 mt-1">{label}</p>
         {sublabel && <p className="text-xs text-gray-400 mt-0.5">{sublabel}</p>}
       </div>
+      {to && (
+        <ArrowUpRight
+          size={14}
+          className="text-gray-300 group-hover:text-[var(--color-brand-600)] transition-colors shrink-0"
+        />
+      )}
     </div>
+  );
+  return to ? (
+    <Link to={to} className="rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-500)]/40">
+      {content}
+    </Link>
+  ) : (
+    <div>{content}</div>
   );
 }
 
@@ -36,26 +58,22 @@ export default function StaffDashboardPage() {
     refetchInterval: 60_000,
   });
 
-  // Key includes role so the STAFF cache never bleeds into other role caches
   const { data: announcements } = useQuery({
     queryKey: ["announcements", "STAFF"],
     queryFn: () => announcementsApi.list(),
   });
 
-  const today = new Date().toLocaleDateString("en-PH", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+  const today = new Date().toLocaleDateString("en-PH", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric",
+  });
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold text-gray-900">Dashboard</h1>
-        <p className="text-sm text-gray-400">{today}</p>
-      </div>
+      <PageHeader title="Today" description={today} />
 
       {isLoading ? (
         <div className="grid grid-cols-2 gap-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="bg-white border border-gray-200 rounded-xl p-5 h-24 animate-pulse" />
-          ))}
+          {Array.from({ length: 4 }).map((_, i) => <SkeletonStat key={i} />)}
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-4">
@@ -65,6 +83,7 @@ export default function StaffDashboardPage() {
             icon={ClipboardList}
             accent={data?.pending_applications ? "amber" : "green"}
             sublabel="Need review"
+            to="/staff/applications"
           />
           <StatCard
             label="Today's Distributions"
@@ -72,6 +91,7 @@ export default function StaffDashboardPage() {
             icon={Truck}
             accent="navy"
             sublabel="Total scheduled"
+            to="/staff/distribution"
           />
           <StatCard
             label="Scheduled"
@@ -90,17 +110,23 @@ export default function StaffDashboardPage() {
         </div>
       )}
 
-      <div>
-        <h2 className="text-sm font-semibold text-gray-700 mb-3">Announcements</h2>
+      <section aria-labelledby="staff-announcements">
+        <h2 id="staff-announcements" className="text-sm font-semibold text-gray-700 mb-3">Announcements</h2>
         <div className="space-y-3">
           {announcements?.results.slice(0, 5).map((a) => (
             <AnnouncementCard key={a.id} announcement={a} />
           ))}
           {!announcements?.results.length && (
-            <p className="text-sm text-gray-400 italic">No announcements.</p>
+            <Card>
+              <EmptyState
+                compact
+                title="No announcements"
+                description="You're all caught up. Check back later for updates from admin."
+              />
+            </Card>
           )}
         </div>
-      </div>
+      </section>
     </div>
   );
 }

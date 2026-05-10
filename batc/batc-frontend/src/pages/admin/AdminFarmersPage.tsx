@@ -4,6 +4,7 @@ import { FarmerTable } from "@/features/farmers/components/FarmerTable";
 import { FarmerDetailDrawer } from "@/features/farmers/components/FarmerDetailDrawer";
 import { WizardShell } from "@/features/farmers/components/FarmerWizard/WizardShell";
 import type { FarmerListItem } from "@/features/farmers/api/farmers.api";
+import { Button, PageHeader } from "@/components/ui";
 
 export function AdminFarmersPage() {
   const [selected, setSelected] = useState<FarmerListItem | null>(null);
@@ -11,19 +12,15 @@ export function AdminFarmersPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-xl font-semibold text-gray-900">Farmers</h1>
-          <p className="text-sm text-gray-500 mt-1">Registered farmer profiles in Bauang.</p>
-        </div>
-        <button
-          onClick={() => setRegistering(true)}
-          className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white rounded-md"
-          style={{ backgroundColor: "#3B6D11" }}
-        >
-          <Plus size={14} /> Register Farmer
-        </button>
-      </div>
+      <PageHeader
+        title="Farmers"
+        description="Registered farmer profiles in Bauang."
+        actions={
+          <Button leftIcon={<Plus size={14} />} onClick={() => setRegistering(true)}>
+            Register Farmer
+          </Button>
+        }
+      />
 
       <FarmerTable isAdmin onSelect={setSelected} />
 
