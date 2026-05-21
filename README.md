@@ -100,6 +100,25 @@ Then open **http://localhost:5173** in your browser.
 
 ---
 
+## Why TypeScript?
+
+The frontend is written in **TypeScript** (a typed superset of JavaScript)
+rather than plain JavaScript, for a few practical reasons:
+
+- **Catches errors before the app runs** — mismatched fields, wrong
+  function arguments, and typos are flagged in the editor instead of
+  causing crashes during a demo.
+- **Fits a form-heavy system** — BATC has complex registration,
+  eligibility, and inventory (FEFO) logic; typed data shapes keep that
+  logic consistent.
+- **Keeps frontend and backend in sync** — API responses from Django are
+  given defined types, so any drift between the two is caught early.
+- **Better tooling** — reliable autocomplete, safe renaming, and
+  go-to-definition across a large component codebase.
+
+TypeScript compiles down to plain JavaScript before the browser runs it,
+so nothing is lost — it is simply a stricter, safer way to write it.
+
 ## Notes
 
 - `.env`, the SQLite database, `venv/`, and `node_modules/` are not
