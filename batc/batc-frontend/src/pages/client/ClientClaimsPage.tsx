@@ -27,20 +27,6 @@ export function ClientClaimsPage() {
 
   const isLoading = farmerLoading || distsLoading;
 
-  if (!farmerLoading && (farmerError || !myFarmer)) {
-    return (
-      <div className="p-4 md:p-0 space-y-3">
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-brand-600)]">Claims</p>
-          <h2 className="text-lg md:text-xl font-semibold text-gray-900 mt-1">My Claims</h2>
-        </div>
-        <MissingFarmerNotice
-          description="Once your profile is linked, your distributions and pickup schedule will appear here."
-        />
-      </div>
-    );
-  }
-
   const confirmMutation = useMutation({
     mutationFn: (id: number) => distributionApi.confirmReceipt(id),
     onSuccess: () => {
@@ -62,6 +48,20 @@ export function ClientClaimsPage() {
       toast.error(getApiErrorMessage(err, "Could not confirm receipt. Please try again."));
     },
   });
+
+  if (!farmerLoading && (farmerError || !myFarmer)) {
+    return (
+      <div className="p-4 md:p-0 space-y-3">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-brand-600)]">Claims</p>
+          <h2 className="text-lg md:text-xl font-semibold text-gray-900 mt-1">My Claims</h2>
+        </div>
+        <MissingFarmerNotice
+          description="Once your profile is linked, your distributions and pickup schedule will appear here."
+        />
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
