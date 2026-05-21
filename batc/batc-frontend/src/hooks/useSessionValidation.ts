@@ -42,7 +42,7 @@ export function useSessionValidation() {
             console.log("Session verified, page accessible");
             wasPageHidden = false;
           })
-          .catch((err) => {
+          .catch(() => {
             // Session invalid - user must login again
             console.log("Session invalid or expired, redirecting to login");
             logout();
