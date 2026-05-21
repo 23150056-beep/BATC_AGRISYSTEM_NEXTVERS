@@ -20,6 +20,9 @@ Thumbs.db
 *.bkp
 *~
 
+# Manuscript / academic documents (not part of the system)
+BATC Documentation/
+
 # Raw wiki sources — large binaries (markdown clippings are committed)
 raw/*.pdf
 raw/*.docx
