@@ -1,10 +1,12 @@
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ClipboardList, Truck, CheckCircle, Clock, ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { dashboardApi } from "@/features/dashboard/api/dashboard.api";
 import { announcementsApi } from "@/features/announcements/api/announcements.api";
 import { AnnouncementCard } from "@/features/announcements/components/AnnouncementCard";
-import { EmptyState, SkeletonStat, PageHeader, Card } from "@/components/ui";
+import { EmptyState, Skeleton, Card } from "@/components/ui";
+import { useAuthStore } from "@/stores/authStore";
 import { cn } from "@/lib/utils";
 
 const ACCENT = {
@@ -25,21 +27,23 @@ interface StatCardProps {
 
 function StatCard({ label, value, icon: Icon, accent = "green", sublabel, to }: StatCardProps) {
   const content = (
-    <div className="bg-white border border-gray-200 rounded-xl p-5 flex items-center gap-4 shadow-sm hover:shadow-md hover:border-gray-300 transition-all group">
-      <div className={cn("p-3 rounded-lg shrink-0", ACCENT[accent])} aria-hidden="true">
-        <Icon size={20} />
+    <div className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md hover:border-gray-300 transition-all group">
+      <div className="flex items-center gap-2.5">
+        <div className={cn("p-2 rounded-md shrink-0", ACCENT[accent])} aria-hidden="true">
+          <Icon size={16} strokeWidth={2} />
+        </div>
+        <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide flex-1 truncate">{label}</p>
+        {to && (
+          <ArrowUpRight
+            size={12}
+            className="text-gray-300 group-hover:text-[var(--color-brand-600)] transition-colors shrink-0"
+          />
+        )}
       </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-2xl font-bold text-gray-900 leading-none">{value}</p>
-        <p className="text-sm text-gray-500 mt-1">{label}</p>
-        {sublabel && <p className="text-xs text-gray-400 mt-0.5">{sublabel}</p>}
+      <div className="mt-3 flex items-baseline gap-2">
+        <p className="text-2xl font-bold text-gray-900 leading-none tabular-nums">{value}</p>
       </div>
-      {to && (
-        <ArrowUpRight
-          size={14}
-          className="text-gray-300 group-hover:text-[var(--color-brand-600)] transition-colors shrink-0"
-        />
-      )}
+      {sublabel && <p className="text-[10px] text-gray-400 mt-1">{sublabel}</p>}
     </div>
   );
   return to ? (
@@ -52,6 +56,8 @@ function StatCard({ label, value, icon: Icon, accent = "green", sublabel, to }: 
 }
 
 export default function StaffDashboardPage() {
+  const { user } = useAuthStore();
+
   const { data, isLoading } = useQuery({
     queryKey: ["dashboard-staff"],
     queryFn: () => dashboardApi.staff(),
@@ -63,20 +69,42 @@ export default function StaffDashboardPage() {
     queryFn: () => announcementsApi.list(),
   });
 
-  const today = new Date().toLocaleDateString("en-PH", {
-    weekday: "long", year: "numeric", month: "long", day: "numeric",
-  });
+  const today = useMemo(
+    () => new Date().toLocaleDateString("en-PH", {
+      weekday: "long", year: "numeric", month: "long", day: "numeric",
+    }),
+    [],
+  );
+
+  const greetingName = useMemo(() => {
+    const fn = user?.first_name?.trim();
+    if (fn) return fn;
+    if (user?.username) return user.username;
+    return "there";
+  }, [user]);
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Today" description={today} />
+      {/* Header — matches admin pattern */}
+      <header className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-brand-600)]">
+            Staff · Overview
+          </p>
+          <h1 className="text-2xl font-semibold text-gray-900 leading-tight mt-1">
+            Welcome back, {greetingName}
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">{today}</p>
+        </div>
+      </header>
 
+      {/* Stat cards */}
       {isLoading ? (
-        <div className="grid grid-cols-2 gap-4">
-          {Array.from({ length: 4 }).map((_, i) => <SkeletonStat key={i} />)}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-[96px] rounded-xl" />)}
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <StatCard
             label="Pending Applications"
             value={data?.pending_applications ?? 0}
@@ -110,8 +138,11 @@ export default function StaffDashboardPage() {
         </div>
       )}
 
+      {/* Announcements */}
       <section aria-labelledby="staff-announcements">
-        <h2 id="staff-announcements" className="text-sm font-semibold text-gray-700 mb-3">Announcements</h2>
+        <h2 id="staff-announcements" className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide mb-3">
+          Announcements
+        </h2>
         <div className="space-y-3">
           {announcements?.results.slice(0, 5).map((a) => (
             <AnnouncementCard key={a.id} announcement={a} />

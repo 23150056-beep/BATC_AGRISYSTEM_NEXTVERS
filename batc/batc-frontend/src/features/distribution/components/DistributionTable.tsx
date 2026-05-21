@@ -95,6 +95,14 @@ export function DistributionTable({ isAdmin: _isAdmin }: Props) {
           onClose={() => setUpdating(null)}
           onSaved={() => {
             qc.invalidateQueries({ queryKey: ["distributions"] });
+            // Status transitions move units between reserved / released /
+            // unreserved — keep inventory + dashboards live across tabs.
+            qc.invalidateQueries({ queryKey: ["inventory-items"] });
+            qc.invalidateQueries({ queryKey: ["inventory-summary"] });
+            qc.invalidateQueries({ queryKey: ["inventory-usage"] });
+            qc.invalidateQueries({ queryKey: ["dashboard-admin"] });
+            qc.invalidateQueries({ queryKey: ["dashboard-staff"] });
+            qc.invalidateQueries({ queryKey: ["applications"] });
             setUpdating(null);
           }}
         />

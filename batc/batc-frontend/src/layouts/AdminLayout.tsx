@@ -171,18 +171,7 @@ export function AdminLayout() {
           ))}
         </nav>
 
-        {/* Footer with shortcut hint */}
-        <button
-          onClick={palette.open}
-          className="mx-3 mb-3 flex items-center justify-between px-3 py-2 rounded-md text-xs text-[var(--color-batc-navy-text)] hover:text-white bg-white/[0.04] hover:bg-white/[0.08] transition-colors"
-          aria-label="Open command palette (Ctrl+K)"
-        >
-          <span className="flex items-center gap-1.5">
-            <Search size={12} />
-            Search
-          </span>
-          <kbd className="px-1.5 py-0.5 text-[9px] font-mono rounded border border-white/15 bg-black/20">⌘K</kbd>
-        </button>
+        {/* Search lives only in the topbar — sidebar has no trigger. */}
       </aside>
 
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
@@ -195,15 +184,27 @@ export function AdminLayout() {
           </nav>
 
           <div className="flex items-center gap-2">
+            {/* Single global search trigger — opens the command palette.
+                Styled as a real search bar so users recognize the affordance
+                without needing the sidebar duplicate. */}
             <button
               type="button"
               onClick={palette.open}
-              className="hidden md:flex items-center gap-2 h-8 pl-2.5 pr-1.5 text-xs text-gray-500 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-md transition-colors"
-              aria-label="Search and quick actions (Ctrl+K)"
+              className={cn(
+                "hidden md:flex items-center gap-2 h-8 pl-2.5 pr-1.5 rounded-md transition-all",
+                "text-xs text-gray-500 bg-white hover:bg-gray-50",
+                "border border-gray-200 hover:border-gray-300",
+                "min-w-[260px] lg:min-w-[320px]",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-500)]/40 focus-visible:border-[var(--color-brand-500)]",
+              )}
+              aria-label="Search pages and actions (Ctrl+K)"
+              aria-keyshortcuts="Control+K Meta+K"
             >
-              <Search size={13} />
-              <span>Search anything…</span>
-              <kbd className="ml-3 px-1.5 py-0.5 rounded bg-white border border-gray-200 text-[10px] text-gray-500 font-mono">
+              <Search size={13} className="text-gray-400 shrink-0" />
+              <span className="flex-1 text-left text-gray-400 group-hover:text-gray-500">
+                Search pages and actions…
+              </span>
+              <kbd className="px-1.5 py-0.5 rounded bg-gray-50 border border-gray-200 text-[10px] text-gray-500 font-mono shrink-0">
                 ⌘K
               </kbd>
             </button>

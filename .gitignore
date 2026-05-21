@@ -2,8 +2,11 @@
 .env
 *.env
 
-# Claude local settings (machine-specific permissions)
-.claude/settings.local.json
+# Editor / local tooling
+.claude/
+.obsidian/
+wiki/.obsidian/
+.instructions.md
 
 # Scratch / generated notes
 _gaps.txt
@@ -12,6 +15,10 @@ _bugs.txt
 # OS
 .DS_Store
 Thumbs.db
+
+# Editor backups / autosaves
+*.bkp
+*~
 
 # Raw wiki sources — large binaries (markdown clippings are committed)
 raw/*.pdf

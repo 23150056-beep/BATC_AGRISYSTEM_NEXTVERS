@@ -7,7 +7,13 @@ const API_ORIGIN = (import.meta.env.VITE_API_URL as string | undefined) ?? "";
 
 const apiClient = axios.create({
   baseURL: `${API_ORIGIN}/api/v1`,
-  headers: { "Content-Type": "application/json" },
+  headers: { 
+    "Content-Type": "application/json",
+    // SECURITY FIX: Prevent browser caching of authenticated API responses
+    "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+    "Pragma": "no-cache",
+    "Expires": "0",
+  },
 });
 
 apiClient.interceptors.request.use((config) => {
@@ -15,6 +21,13 @@ apiClient.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  
+  // SECURITY FIX: Ensure cache-control headers are set on all requests
+  // to prevent browser from serving cached responses for authenticated pages
+  if (!config.headers["Cache-Control"]) {
+    config.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, proxy-revalidate";
+  }
+  
   return config;
 });
 

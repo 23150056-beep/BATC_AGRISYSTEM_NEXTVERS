@@ -27,6 +27,10 @@ export interface Program {
   end_date: string;
   target_barangays: string[];
   item_count: number;
+  /** Total applications submitted against the program. */
+  application_count?: number;
+  /** Applications that reached FULFILLED status. */
+  delivered_count?: number;
   // M-4: eligible_farmer_count is only returned by the detail endpoint to
   // avoid an N+1 query on the list. Use optional to allow both shapes.
   eligible_farmer_count?: number;

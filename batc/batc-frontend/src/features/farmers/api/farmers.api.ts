@@ -9,6 +9,8 @@ export interface FarmParcel {
   ownership_type: string;
 }
 
+export type VerificationStatus = "UNVERIFIED" | "PENDING" | "VERIFIED" | "REJECTED";
+
 export interface FarmerListItem {
   id: number;
   full_name: string;
@@ -24,6 +26,9 @@ export interface FarmerListItem {
   is_archived: boolean;
   created_at: string;
   encoded_by_name: string | null;
+  profile_photo: string | null;
+  verification_status: VerificationStatus;
+  is_verified: boolean;
 }
 
 export interface FarmerDetail extends FarmerListItem {
@@ -41,6 +46,9 @@ export interface FarmerDetail extends FarmerListItem {
   archived_at: string | null;
   updated_at: string;
   parcels: FarmParcel[];
+  verification_document: string | null;
+  linked_user_id: number | null;
+  linked_user_name: string | null;
 }
 
 export interface FarmerWritePayload {
@@ -68,7 +76,13 @@ export interface FarmerWritePayload {
 }
 
 export const farmersApi = {
-  list: (params?: { search?: string; barangay?: string; page?: number; archived?: boolean }) =>
+  list: (params?: {
+    search?: string;
+    barangay?: string;
+    page?: number;
+    /** "true" = archived only, "all" = both, anything else = active only. */
+    archived?: "true" | "all" | "false";
+  }) =>
     apiClient.get<PaginatedResponse<FarmerListItem>>("/farmers/", { params }).then((r) => r.data),
 
   retrieve: (id: number) =>
@@ -89,17 +103,47 @@ export const farmersApi = {
   me: () =>
     apiClient.get<FarmerDetail>("/farmers/me/").then((r) => r.data),
 
+  /** PATCH /farmers/me/ — self-update limited fields (FormData for file uploads). */
+  updateMe: (formData: FormData) =>
+    apiClient
+      .patch<FarmerDetail>("/farmers/me/", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      .then((r) => r.data),
+
+  /** Staff/admin: update verification status for a specific farmer. */
+  verify: (id: number, payload: { verification_status: VerificationStatus }) =>
+    apiClient.patch<FarmerDetail>(`/farmers/${id}/verify/`, payload).then((r) => r.data),
+
   /** Public — no auth token required. Creates User + Farmer atomically and
    *  returns JWT tokens so the caller can log the farmer in immediately. */
   selfRegister: (payload: FarmerWritePayload & {
     username: string;
     password: string;
     confirm_password: string;
-  }) =>
-    apiClient
+    verification_document?: File;
+  }) => {
+    const form = new FormData();
+    const { verification_document, ...rest } = payload;
+    // Append all non-file fields
+    (Object.keys(rest) as (keyof typeof rest)[]).forEach((k) => {
+      const v = rest[k];
+      if (v === undefined || v === null) return;
+      if (Array.isArray(v)) {
+        form.append(k, JSON.stringify(v));
+      } else {
+        form.append(k, String(v));
+      }
+    });
+    if (verification_document) {
+      form.append("verification_document", verification_document);
+    }
+    return apiClient
       .post<{ access: string; refresh: string; user: User; farmer: FarmerDetail }>(
         "/auth/register/",
-        payload
+        form,
+        { headers: { "Content-Type": "multipart/form-data" } }
       )
-      .then((r) => r.data),
+      .then((r) => r.data);
+  },
 };

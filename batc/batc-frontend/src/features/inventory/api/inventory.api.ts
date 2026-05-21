@@ -10,7 +10,36 @@ export interface InventoryItem {
   total_stock: number;
   is_low_stock: boolean;
   batch_count: number;
+  /** Units already promised to scheduled / delayed / rescheduled distributions. */
+  reserved_qty: number;
+  /** total_stock − reserved_qty (clamped at 0). What's actually free to allocate. */
+  available_qty: number;
   created_at: string;
+}
+
+export interface InventoryItemUsage {
+  item_id: number;
+  programs: {
+    id: number;
+    code: string;
+    name: string;
+    status: string;
+    qty_per_beneficiary: string;
+    active_applications: number;
+  }[];
+  upcoming: {
+    distribution_id: number;
+    scheduled_date: string | null;
+    status: string;
+    farmer_name: string;
+    barangay: string;
+    program_code: string;
+    program_name: string;
+    lot_number: string;
+    qty_reserved: number;
+  }[];
+  upcoming_count: number;
+  reserved_total: number;
 }
 
 export interface StockBatch {
@@ -23,6 +52,18 @@ export interface StockBatch {
   initial_qty: string;
   current_qty: string;
   created_at: string;
+}
+
+export interface InventorySummary {
+  total_skus: number;
+  low_stock_count: number;
+  categories_count: number;
+  active_batch_count: number;
+  total_units: number;
+  /** Total units soft-reserved across the system for live distributions. */
+  reserved_units: number;
+  /** total_units − reserved_units (clamped at 0). */
+  available_units: number;
 }
 
 export interface StockMovement {
@@ -58,4 +99,11 @@ export const inventoryApi = {
 
   lowStock: () =>
     apiClient.get<InventoryItem[]>("/inventory/items/low-stock/").then((r) => r.data),
+
+  summary: () =>
+    apiClient.get<InventorySummary>("/inventory/items/summary/").then((r) => r.data),
+
+  /** Cross-page links: which programs use this item and which distributions reserve it. */
+  usage: (itemId: number) =>
+    apiClient.get<InventoryItemUsage>(`/inventory/items/${itemId}/usage/`).then((r) => r.data),
 };

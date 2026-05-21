@@ -2,6 +2,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/stores/authStore";
 import { authApi } from "@/services/api/auth.api";
+import { useSessionValidation } from "@/hooks/useSessionValidation";
 
 /**
  * Guards every authenticated route.
@@ -14,10 +15,17 @@ import { authApi } from "@/services/api/auth.api";
  *
  *      Fix: if we have a valid token but no user, fetch /auth/me once before
  *      rendering any child routes. Show a spinner until resolved.
+ *
+ * SECURITY FIX: Added useSessionValidation hook to prevent browser from serving
+ * cached authenticated pages. When user navigates back to login page, clicking
+ * forward will NOT show cached dashboard - they must log in again.
  */
 export function ProtectedRoute() {
   const { isAuthenticated, user, setUser, logout } = useAuthStore();
   const authenticated = isAuthenticated();
+
+  // Prevent browser cache from serving authenticated pages
+  useSessionValidation();
 
   // True only on hard refresh: token exists, user not yet hydrated.
   const [isInitializing, setIsInitializing] = useState(authenticated && !user);

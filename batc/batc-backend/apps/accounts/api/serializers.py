@@ -4,13 +4,30 @@ from apps.accounts.models import User, Role
 
 class UserListSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
+    # Surface the orphan state so the admin Users page can flag CLIENT
+    # accounts without a linked farmer profile.
+    has_farmer_profile = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ["id", "username", "email", "first_name", "last_name", "full_name", "role", "is_active", "is_archived", "date_joined"]
+        fields = ["id", "username", "email", "first_name", "last_name", "full_name",
+                  "role", "is_active", "is_archived", "date_joined", "has_farmer_profile"]
 
     def get_full_name(self, obj):
         return obj.get_full_name() or obj.username
+
+    def get_has_farmer_profile(self, obj):
+        # Only meaningful for CLIENT users — short-circuit so ADMIN/STAFF rows
+        # never trigger a reverse OneToOne lookup.
+        if obj.role != "CLIENT":
+            return None
+        try:
+            # `farmer_profile` is the OneToOne reverse accessor from Farmer.linked_user.
+            # Accessing it raises Farmer.DoesNotExist when no row exists; catch that
+            # so the serializer returns False instead of bubbling a 500.
+            return obj.farmer_profile is not None and not obj.farmer_profile.is_archived
+        except Exception:
+            return False
 
 
 class UserDetailSerializer(UserListSerializer):

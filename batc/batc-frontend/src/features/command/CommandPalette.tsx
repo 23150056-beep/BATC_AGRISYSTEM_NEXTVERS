@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
 import {
   Search, ArrowRight, LayoutDashboard, Leaf, Users, Package, ClipboardList,
-  Truck, BarChart2, Bell, FileCheck, MessageSquare, Home, User, LogOut,
+  Truck, BarChart2, Bell, FileCheck, MessageSquare, Home, User, LogOut, X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/authStore";
@@ -55,7 +55,9 @@ export function useCommandPalette() {
 
 /**
  * Global command palette — quick navigation + actions, accessible via Ctrl+K
- * (or Cmd+K on macOS). Type to filter. Arrow keys to navigate. Enter to run.
+ * (or Cmd+K on macOS). Type to filter, arrow keys to navigate, Enter to run,
+ * Escape to close. Escape works regardless of where focus lives because we
+ * register the listener at the window level while the palette is open.
  */
 export function CommandPalette({ open, onOpenChange, role }: Props) {
   const navigate = useNavigate();
@@ -63,8 +65,10 @@ export function CommandPalette({ open, onOpenChange, role }: Props) {
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
-  // Reset state when opening
+  // Reset state when opening; focus the input on the next frame so the portal
+  // has time to mount.
   useEffect(() => {
     if (open) {
       setQuery("");
@@ -72,6 +76,21 @@ export function CommandPalette({ open, onOpenChange, role }: Props) {
       requestAnimationFrame(() => inputRef.current?.focus());
     }
   }, [open]);
+
+  // Window-level Escape — fires no matter what's focused (Finding #99).
+  // Without this, Escape only closed the palette if focus was inside the
+  // dialog subtree, which broke once the user clicked any result hover state.
+  useEffect(() => {
+    if (!open) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        onOpenChange(false);
+      }
+    }
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
+  }, [open, onOpenChange]);
 
   const handleLogout = useCallback(async () => {
     if (refreshToken) await authApi.logout(refreshToken).catch(() => {});
@@ -158,9 +177,16 @@ export function CommandPalette({ open, onOpenChange, role }: Props) {
       e.preventDefault();
       const it = filtered[active];
       if (it) runItem(it);
-    } else if (e.key === "Escape") {
-      e.preventDefault();
-      onOpenChange(false);
+    }
+    // Escape is handled by the window listener above so it works regardless
+    // of where focus is inside the dialog.
+  }
+
+  // Re-focus the search input when the user clicks dead space inside the
+  // dialog — keeps typing flowing even after a mouse hover deselects.
+  function onDialogMouseDown(e: React.MouseEvent) {
+    if (e.target === dialogRef.current) {
+      inputRef.current?.focus();
     }
   }
 
@@ -177,15 +203,15 @@ export function CommandPalette({ open, onOpenChange, role }: Props) {
       }}
     >
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm"
-        aria-hidden="true"
-      />
+      <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm" aria-hidden="true" />
 
       {/* Dialog */}
       <div
+        ref={dialogRef}
         className="relative w-full max-w-lg bg-white rounded-xl shadow-2xl ring-1 ring-gray-200 overflow-hidden"
         onKeyDown={onKey}
+        onMouseDown={onDialogMouseDown}
+        tabIndex={-1}
       >
         <div className="flex items-center gap-2 px-3 border-b border-gray-100">
           <Search size={16} className="text-gray-400 shrink-0" />
@@ -199,7 +225,16 @@ export function CommandPalette({ open, onOpenChange, role }: Props) {
             aria-controls="palette-list"
             aria-activedescendant={filtered[active] ? `cmd-${filtered[active].id}` : undefined}
           />
-          <kbd className="text-[10px] text-gray-400 font-mono">ESC</kbd>
+          {/* Close pill — also acts as a visible ESC affordance */}
+          <button
+            type="button"
+            onClick={() => onOpenChange(false)}
+            aria-label="Close (Esc)"
+            className="inline-flex items-center gap-1 text-[10px] text-gray-400 hover:text-gray-700 font-mono px-1.5 py-0.5 rounded hover:bg-gray-100"
+          >
+            ESC
+            <X size={10} aria-hidden="true" />
+          </button>
         </div>
 
         <div id="palette-list" role="listbox" className="max-h-[60vh] overflow-y-auto py-2">
@@ -225,7 +260,7 @@ export function CommandPalette({ open, onOpenChange, role }: Props) {
                     onMouseEnter={() => setActive(idx)}
                     className={cn(
                       "w-full flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-colors",
-                      isActive ? "bg-[#EAF3DE] text-[#3B6D11]" : "text-gray-700 hover:bg-gray-50"
+                      isActive ? "bg-[#EAF3DE] text-[#3B6D11]" : "text-gray-700 hover:bg-gray-50",
                     )}
                   >
                     <Icon size={15} className={isActive ? "text-[#3B6D11]" : "text-gray-400"} />
@@ -240,13 +275,20 @@ export function CommandPalette({ open, onOpenChange, role }: Props) {
 
         <div className="px-3 py-2 border-t border-gray-100 bg-gray-50/50 flex items-center justify-between text-[10px] text-gray-500">
           <div className="flex items-center gap-3">
-            <span><kbd className="px-1 rounded bg-white border border-gray-200 font-mono">↑↓</kbd> Navigate</span>
-            <span><kbd className="px-1 rounded bg-white border border-gray-200 font-mono">↵</kbd> Open</span>
+            <span>
+              <kbd className="px-1 rounded bg-white border border-gray-200 font-mono">↑↓</kbd> Navigate
+            </span>
+            <span>
+              <kbd className="px-1 rounded bg-white border border-gray-200 font-mono">↵</kbd> Open
+            </span>
+            <span>
+              <kbd className="px-1 rounded bg-white border border-gray-200 font-mono">Esc</kbd> Close
+            </span>
           </div>
           <span>BATC AgriSystem</span>
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }

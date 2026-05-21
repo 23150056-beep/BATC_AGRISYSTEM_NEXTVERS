@@ -138,8 +138,6 @@ function ApplicationDetail({ app, onClose }: { app: Application; onClose: () => 
               {app.reviewed_by_name && <div className="flex justify-between"><span>Reviewer</span><span className="text-gray-700">{app.reviewed_by_name}</span></div>}
             </div>
 
-            {/* Cancel action — M-8: backend only permits cancelling SUBMITTED
-                applications for CLIENT role. UNDER_REVIEW is staff-only territory. */}
             {app.status === "SUBMITTED" && (
               <button
                 onClick={() => cancelMut.mutate()}
@@ -165,10 +163,11 @@ export function ClientApplicationsPage() {
   });
 
   return (
-    <div className="p-4 space-y-3 max-w-2xl mx-auto">
+    <div className="p-4 md:p-0 space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-base font-semibold text-gray-900">My Applications</h2>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-brand-600)]">Applications</p>
+          <h2 className="text-lg md:text-xl font-semibold text-gray-900 mt-1">My Applications</h2>
           <p className="text-xs text-gray-500 mt-0.5">Track every application you've submitted.</p>
         </div>
         <button
@@ -182,7 +181,7 @@ export function ClientApplicationsPage() {
       </div>
 
       {isLoading && (
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {[1, 2].map((i) => (
             <div key={i} className="bg-white border border-gray-200 rounded-xl p-4 animate-pulse">
               <div className="h-4 w-3/4 bg-gray-200 rounded mb-2" />
@@ -200,32 +199,34 @@ export function ClientApplicationsPage() {
         </div>
       )}
 
-      {apps?.map((app) => {
-        const meta = STATUS_META[app.status];
-        return (
-          <button
-            key={app.id}
-            onClick={() => setSelected(app)}
-            className="w-full text-left bg-white border border-gray-200 rounded-xl p-4 hover:border-[var(--color-brand-600)]/40 hover:shadow-sm transition-all"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-gray-900 text-sm truncate">{app.program_name}</h3>
-                <p className="text-xs text-gray-400 font-mono mt-0.5">{app.program_code}</p>
-                <p className="text-xs text-gray-500 mt-1.5">
-                  Submitted {formatDistanceToNow(new Date(app.submitted_at), { addSuffix: true })}
-                </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {apps?.map((app) => {
+          const meta = STATUS_META[app.status];
+          return (
+            <button
+              key={app.id}
+              onClick={() => setSelected(app)}
+              className="w-full text-left bg-white border border-gray-200 rounded-xl p-4 hover:border-[var(--color-brand-600)]/40 hover:shadow-sm transition-all"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-gray-900 text-sm truncate">{app.program_name}</h3>
+                  <p className="text-xs text-gray-400 font-mono mt-0.5">{app.program_code}</p>
+                  <p className="text-xs text-gray-500 mt-1.5">
+                    Submitted {formatDistanceToNow(new Date(app.submitted_at), { addSuffix: true })}
+                  </p>
+                </div>
+                <span className={cn("inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full shrink-0", meta.bg, meta.color)}>
+                  <meta.icon size={11} /> {meta.label}
+                </span>
               </div>
-              <span className={cn("inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full shrink-0", meta.bg, meta.color)}>
-                <meta.icon size={11} /> {meta.label}
-              </span>
-            </div>
-            {app.status === "REJECTED" && app.rejection_reason && (
-              <p className="text-xs text-[var(--color-danger)] mt-2 line-clamp-1">⚠ {app.rejection_reason}</p>
-            )}
-          </button>
-        );
-      })}
+              {app.status === "REJECTED" && app.rejection_reason && (
+                <p className="text-xs text-[var(--color-danger)] mt-2 line-clamp-1">⚠ {app.rejection_reason}</p>
+              )}
+            </button>
+          );
+        })}
+      </div>
 
       {selected && <ApplicationDetail app={selected} onClose={() => setSelected(null)} />}
     </div>

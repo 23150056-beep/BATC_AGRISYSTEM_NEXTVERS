@@ -15,6 +15,8 @@ export interface UserItem {
   is_archived: boolean;
   date_joined: string;
   last_login: string | null;
+  /** True for CLIENT users with an active linked Farmer; null for non-CLIENT roles. */
+  has_farmer_profile: boolean | null;
 }
 
 export interface UserWritePayload {

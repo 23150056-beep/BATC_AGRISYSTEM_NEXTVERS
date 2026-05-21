@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
@@ -46,3 +47,30 @@ class Feedback(models.Model):
     @property
     def is_quality_issue(self) -> bool:
         return self.issue_type in QUALITY_ISSUE_TYPES
+
+
+class FeedbackReply(models.Model):
+    """
+    A staff/admin reply attached to a Feedback row.
+
+    Multiple replies are allowed — the panel shows them chronologically so the
+    conversation between the farmer (read-only here) and staff stays auditable.
+    Authors are restricted at the API layer to STAFF/ADMIN; the FK uses
+    SET_NULL so a removed user does not delete their reply history.
+    """
+    feedback   = models.ForeignKey(
+        Feedback, on_delete=models.CASCADE, related_name="replies"
+    )
+    author     = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL,
+        related_name="feedback_replies",
+    )
+    message    = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["created_at"]
+        indexes = [models.Index(fields=["feedback", "created_at"])]
+
+    def __str__(self):
+        return f"Reply #{self.pk} on Feedback #{self.feedback_id}"

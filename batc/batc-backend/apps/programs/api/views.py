@@ -1,3 +1,5 @@
+from django.db.models import Count, Q
+
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -39,6 +41,15 @@ class ProgramViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
+        # Annotate counts so the list view can render progress bars without N+1.
+        qs = qs.annotate(
+            application_count=Count("applications", distinct=True),
+            delivered_count=Count(
+                "applications",
+                filter=Q(applications__status="FULFILLED"),
+                distinct=True,
+            ),
+        )
         params = self.request.query_params
         if status_filter := params.get("status"):
             qs = qs.filter(status=status_filter)

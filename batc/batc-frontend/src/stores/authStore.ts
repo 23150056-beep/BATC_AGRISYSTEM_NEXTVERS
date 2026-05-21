@@ -29,7 +29,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   logout() {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
+    localStorage.removeItem("_auth_check_time");
     set({ user: null, accessToken: null, refreshToken: null });
+    
+    // SECURITY FIX: Clear session storage to prevent cached page access
+    if (typeof window !== "undefined") {
+      sessionStorage.clear();
+    }
   },
 
   isAuthenticated() {

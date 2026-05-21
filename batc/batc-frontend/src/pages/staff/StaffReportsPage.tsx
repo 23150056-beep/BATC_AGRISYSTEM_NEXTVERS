@@ -2,19 +2,13 @@ import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Truck, Users, ClipboardList } from "lucide-react";
 import { ReportDownloadBar } from "@/features/reports/components/ReportDownloadBar";
-import { ReportSummaryCards } from "@/features/reports/components/ReportSummaryCards";
-import { ReportTrendChart, ReportBreakdownList } from "@/features/reports/components/ReportTrendChart";
+import { ReportKpiStrip } from "@/features/reports/components/ReportKpiStrip";
+import {
+  ReportTrendChart,
+  ReportBreakdownList,
+} from "@/features/reports/components/ReportTrendChart";
 import { DateRangePicker, type DateRange } from "@/features/reports/components/DateRangePicker";
 import { reportsApi } from "@/features/reports/api/reports.api";
-import { PageHeader } from "@/components/ui";
-
-const DIST_STATUSES = [
-  "SCHEDULED","DELIVERED","DELAYED","RESCHEDULED","OUT_OF_STOCK","UNAVAILABLE"
-].map((v) => ({ value: v, label: v.replace("_", " ") }));
-
-const APP_STATUSES = [
-  "SUBMITTED","UNDER_REVIEW","APPROVED","REJECTED","CANCELLED","FULFILLED"
-].map((v) => ({ value: v, label: v.replace("_", " ") }));
 
 function defaultRange(): DateRange {
   const to = new Date();
@@ -25,36 +19,57 @@ function defaultRange(): DateRange {
 }
 
 const STATUS_LABELS: Record<string, string> = {
-  SCHEDULED: "Scheduled", DELIVERED: "Delivered", DELAYED: "Delayed",
-  RESCHEDULED: "Rescheduled", OUT_OF_STOCK: "Out of Stock", UNAVAILABLE: "Unavailable",
+  SCHEDULED:    "Scheduled",
+  DELIVERED:    "Delivered",
+  DELAYED:      "Delayed",
+  RESCHEDULED:  "Rescheduled",
+  OUT_OF_STOCK: "Out of stock",
+  UNAVAILABLE:  "Unavailable",
 };
+
+function distStatusTone(label: string): "green" | "amber" | "red" | "navy" | "neutral" {
+  const s = label.toLowerCase();
+  if (s.includes("delivered")) return "green";
+  if (s.includes("scheduled")) return "amber";
+  if (s.includes("delayed") || s.includes("out of stock") || s.includes("unavailable")) return "red";
+  if (s.includes("rescheduled")) return "navy";
+  return "neutral";
+}
 
 export default function StaffReportsPage() {
   const [range, setRange] = useState<DateRange>(defaultRange);
 
-  const { data: summary, isLoading } = useQuery({
+  const { data: summary, isLoading, isFetching } = useQuery({
     queryKey: ["report-summary", range],
-    queryFn:  () => reportsApi.summary({ date_from: range.from, date_to: range.to }),
+    queryFn: () => reportsApi.summary({ date_from: range.from, date_to: range.to }),
+    placeholderData: (prev) => prev,
   });
 
   const distBreakdown = useMemo(
-    () => (summary?.distribution_status_breakdown ?? []).map((d) => ({
-      label: STATUS_LABELS[d.status] ?? d.status, count: d.count,
-    })),
-    [summary]
+    () =>
+      (summary?.distribution_status_breakdown ?? []).map((d) => ({
+        label: STATUS_LABELS[d.status] ?? d.status,
+        count: d.count,
+      })),
+    [summary],
   );
 
   return (
     <div className="space-y-5">
-      <PageHeader
-        title="Reports"
-        description="Track operational activity and download CSV exports."
-      />
+      <header className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-[#3b6d11]">
+            Insights
+          </p>
+          <h1 className="text-2xl font-semibold text-gray-900 mt-1">Reports</h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Track operational activity and download CSV exports.
+          </p>
+        </div>
+        <DateRangePicker value={range} onChange={setRange} isFetching={isFetching} />
+      </header>
 
-      <DateRangePicker value={range} onChange={setRange} />
-
-      {/* Compact summary — staff don't need feedback/admin metrics */}
-      <ReportSummaryCards data={summary} isLoading={isLoading} fullSet={false} />
+      <ReportKpiStrip data={summary} isLoading={isLoading} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2">
@@ -67,6 +82,8 @@ export default function StaffReportsPage() {
         <ReportBreakdownList
           title="Distribution status"
           data={distBreakdown}
+          variant="dots"
+          toneFor={distStatusTone}
         />
       </div>
 
@@ -77,10 +94,11 @@ export default function StaffReportsPage() {
           description="Scheduled and delivered distributions assigned to your queue."
           endpoint="/reports/distributions/"
           icon={Truck}
+          dateRange={range}
           filters={[
-            { key: "date_from", label: "From",  type: "date" },
-            { key: "date_to",   label: "To",    type: "date" },
-            { key: "status",    label: "Status", type: "select", options: DIST_STATUSES },
+            { key: "date_from",      label: "From",          type: "date" },
+            { key: "date_to",        label: "To",            type: "date" },
+            { key: "status",         label: "Status",        type: "select" },
             { key: "scheduled_date", label: "Specific date", type: "date" },
           ]}
         />
@@ -89,10 +107,11 @@ export default function StaffReportsPage() {
           description="All applications relevant to your review queue."
           endpoint="/reports/applications/"
           icon={ClipboardList}
+          dateRange={range}
           filters={[
             { key: "date_from", label: "From",   type: "date" },
             { key: "date_to",   label: "To",     type: "date" },
-            { key: "status",    label: "Status", type: "select", options: APP_STATUSES },
+            { key: "status",    label: "Status", type: "select" },
           ]}
         />
         <ReportDownloadBar
@@ -100,8 +119,9 @@ export default function StaffReportsPage() {
           description="Farmer master list with profile and parcel info."
           endpoint="/reports/farmers/"
           icon={Users}
+          dateRange={range}
           filters={[
-            { key: "barangay",  label: "Barangay",        type: "text", hint: "Exact match" },
+            { key: "barangay",  label: "Barangay",        type: "text" },
             { key: "date_from", label: "Registered from", type: "date" },
             { key: "date_to",   label: "Registered to",   type: "date" },
           ]}

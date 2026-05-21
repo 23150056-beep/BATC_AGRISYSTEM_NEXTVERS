@@ -13,6 +13,16 @@ export const ISSUE_TYPE_LABELS: Record<IssueType, string> = {
 
 export const QUALITY_ISSUE_TYPES: IssueType[] = ["DAMAGED", "EXPIRED", "WRONG_QUANTITY", "WRONG_ITEM"];
 
+export interface FeedbackReply {
+  id: number;
+  feedback: number;
+  author: number | null;
+  author_name: string;
+  author_role: "ADMIN" | "STAFF" | "CLIENT" | null;
+  message: string;
+  created_at: string;
+}
+
 export interface Feedback {
   id: number;
   farmer: number;
@@ -25,6 +35,9 @@ export interface Feedback {
   comment: string;
   status: "NEW" | "ACKNOWLEDGED" | "RESOLVED";
   created_at: string;
+  /** Chronological staff/admin replies. */
+  replies?: FeedbackReply[];
+  reply_count?: number;
 }
 
 export const feedbackApi = {
@@ -39,4 +52,12 @@ export const feedbackApi = {
 
   qualityAlertCount: () =>
     apiClient.get<{ count: number }>("/feedback/quality-alert-count/").then((r) => r.data),
+
+  /**
+   * Post a staff/admin reply on a feedback row. Returns the FULL updated
+   * feedback (with replies embedded) so the caller can swap state in place.
+   * Server-side this also notifies the farmer + auto-acknowledges NEW items.
+   */
+  reply: (id: number, message: string) =>
+    apiClient.post<Feedback>(`/feedback/${id}/reply/`, { message }).then((r) => r.data),
 };

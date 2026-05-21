@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Star, RefreshCw, MessageSquare, CheckCheck, Clock, AlertTriangle } from "lucide-react";
+import { Star, RefreshCw, MessageSquare, CheckCheck, Clock, AlertTriangle, Send, CornerDownRight } from "lucide-react";
 import { feedbackApi, type Feedback, ISSUE_TYPE_LABELS } from "../api/feedback.api";
 import { cn } from "@/lib/utils";
 
@@ -88,6 +88,30 @@ export function FeedbackManagementPanel() {
       toast.success("Feedback status updated.");
     },
     onError: () => toast.error("Failed to update status."),
+  });
+
+  const [draft, setDraft] = useState("");
+  // Reset the draft whenever the user picks a different feedback so we don't
+  // accidentally cross-post a reply intended for another farmer.
+  useEffect(() => { setDraft(""); }, [selected?.id]);
+
+  const replyMut = useMutation({
+    mutationFn: ({ id, message }: { id: number; message: string }) =>
+      feedbackApi.reply(id, message),
+    onSuccess: (updated) => {
+      qc.invalidateQueries({ queryKey: ["feedback"] });
+      qc.invalidateQueries({ queryKey: ["feedback-quality-count"] });
+      setSelected(updated);
+      setDraft("");
+      toast.success("Reply sent. The farmer will be notified.");
+    },
+    onError: (err: any) => {
+      const detail =
+        err?.response?.data?.message ??
+        err?.response?.data?.detail ??
+        "Failed to send reply.";
+      toast.error(typeof detail === "string" ? detail : "Failed to send reply.");
+    },
   });
 
   const results = data?.results ?? [];
@@ -292,6 +316,100 @@ export function FeedbackManagementPanel() {
               <div className="text-xs text-gray-400 flex items-center gap-1.5">
                 <Clock size={11} />
                 Submitted {new Date(selected.created_at).toLocaleString()}
+              </div>
+
+              {/* Replies thread + composer */}
+              <div className="pt-3 border-t border-gray-100">
+                <div className="flex items-center gap-1.5 mb-2">
+                  <CornerDownRight size={13} className="text-[#3B6D11]" />
+                  <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                    Replies{selected.replies?.length ? ` · ${selected.replies.length}` : ""}
+                  </p>
+                </div>
+
+                {selected.replies && selected.replies.length > 0 ? (
+                  <ul className="space-y-2 mb-3">
+                    {selected.replies.map((r) => (
+                      <li
+                        key={r.id}
+                        className="bg-[#F7FAF3] border border-[#D6E8BF] rounded-lg px-3 py-2"
+                      >
+                        <div className="flex items-baseline justify-between gap-2">
+                          <p className="text-xs font-semibold text-[#27500A]">
+                            {r.author_name}
+                            {r.author_role && (
+                              <span className="ml-1 font-normal text-gray-400 capitalize">
+                                · {r.author_role.toLowerCase()}
+                              </span>
+                            )}
+                          </p>
+                          <span className="text-[10px] text-gray-400 tabular-nums shrink-0">
+                            {new Date(r.created_at).toLocaleString(undefined, {
+                              month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+                            })}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-800 leading-relaxed mt-1 whitespace-pre-wrap">
+                          {r.message}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-xs text-gray-400 italic mb-3">
+                    No replies yet. Send the first one — the farmer will be notified.
+                  </p>
+                )}
+
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const msg = draft.trim();
+                    if (!msg || replyMut.isPending) return;
+                    replyMut.mutate({ id: selected.id, message: msg });
+                  }}
+                  className="space-y-2"
+                >
+                  <label htmlFor={`reply-${selected.id}`} className="sr-only">
+                    Reply to {selected.farmer_name}
+                  </label>
+                  <textarea
+                    id={`reply-${selected.id}`}
+                    value={draft}
+                    onChange={(e) => setDraft(e.target.value)}
+                    onKeyDown={(e) => {
+                      // Cmd/Ctrl + Enter sends.
+                      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+                        e.preventDefault();
+                        const msg = draft.trim();
+                        if (!msg || replyMut.isPending) return;
+                        replyMut.mutate({ id: selected.id, message: msg });
+                      }
+                    }}
+                    placeholder={
+                      selected.is_quality_issue
+                        ? "Explain how the issue is being resolved…"
+                        : "Reply to the farmer…"
+                    }
+                    rows={3}
+                    maxLength={4000}
+                    disabled={replyMut.isPending}
+                    className="w-full text-sm rounded-md border border-gray-300 px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-[#639922]/40 focus:border-[#639922] resize-y disabled:bg-gray-50 disabled:text-gray-500"
+                  />
+                  <div className="flex items-center justify-between">
+                    <p className="text-[11px] text-gray-400">
+                      The farmer is notified instantly · <kbd className="font-mono">⌘/Ctrl + Enter</kbd> to send
+                    </p>
+                    <button
+                      type="submit"
+                      disabled={replyMut.isPending || !draft.trim()}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white rounded-md bg-[#3B6D11] hover:bg-[#2f560d] disabled:opacity-55 disabled:cursor-not-allowed transition-all active:scale-[0.98] shadow-sm"
+                    >
+                      <Send size={12} strokeWidth={2.25} />
+                      {replyMut.isPending ? "Sending…" : "Send reply"}
+                    </button>
+                  </div>
+                </form>
               </div>
 
               {/* Actions */}

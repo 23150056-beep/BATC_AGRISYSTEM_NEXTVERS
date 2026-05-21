@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Star, AlertTriangle } from "lucide-react";
 import { feedbackApi, type IssueType, ISSUE_TYPE_LABELS, QUALITY_ISSUE_TYPES } from "../api/feedback.api";
+import { getApiErrorMessage } from "@/lib/errors";
 
 interface Props {
   distributionId?: number;
@@ -39,7 +40,7 @@ export function FeedbackForm({ distributionId, onSaved }: Props) {
       setIssueType("GENERAL");
       onSaved?.();
     },
-    onError: (err: any) => toast.error(err?.response?.data?.detail ?? "Submission failed."),
+    onError: (err) => toast.error(getApiErrorMessage(err, "Submission failed.")),
   });
 
   return (

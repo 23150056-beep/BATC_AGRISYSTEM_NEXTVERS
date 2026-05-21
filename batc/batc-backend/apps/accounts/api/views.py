@@ -49,7 +49,9 @@ class MeView(APIView):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all().order_by("username")
+    # select_related on the reverse OneToOne (farmer_profile) so the
+    # has_farmer_profile serializer field doesn't N+1 across the user list.
+    queryset = User.objects.select_related("farmer_profile").all().order_by("username")
     http_method_names = ["get", "post", "patch", "delete", "head", "options"]
 
     def get_serializer_class(self):
@@ -147,7 +149,7 @@ class FarmerSelfRegistrationView(APIView):
                 "access":  str(refresh.access_token),
                 "refresh": str(refresh),
                 "user":    UserMeSerializer(user).data,
-                "farmer":  FarmerDetailSerializer(farmer).data,
+                "farmer":  FarmerDetailSerializer(farmer, context={"request": request}).data,
             },
             status=status.HTTP_201_CREATED,
         )

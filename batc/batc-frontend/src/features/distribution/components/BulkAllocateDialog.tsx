@@ -28,6 +28,10 @@ export function BulkAllocateDialog({ onClose }: Props) {
     }),
     onSuccess: (result) => {
       qc.invalidateQueries({ queryKey: ["distributions"] });
+      // Bulk reschedules can shift reservation dates — refresh inventory views too.
+      qc.invalidateQueries({ queryKey: ["inventory-items"] });
+      qc.invalidateQueries({ queryKey: ["inventory-summary"] });
+      qc.invalidateQueries({ queryKey: ["inventory-usage"] });
       // M-7: endpoint now returns { updated } (bulk-reschedule), not { created, errors }
       toast.success(`Updated ${result.updated} distribution(s).`);
       onClose();

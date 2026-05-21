@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Search, Plus, ArchiveRestore, Archive, KeyRound, Pencil } from "lucide-react";
+import { Search, Plus, ArchiveRestore, Archive, KeyRound, Pencil, AlertTriangle } from "lucide-react";
 import { usersApi, type UserItem } from "../api/users.api";
 import { UserRoleBadge } from "./UserRoleBadge";
 import { UserFormModal } from "./UserFormModal";
@@ -40,8 +40,31 @@ export function UserTable({ isAdmin }: UserTableProps) {
     },
   });
 
+  const orphanCount = useMemo(
+    () => (data?.results ?? []).filter((u) => u.role === "CLIENT" && u.has_farmer_profile === false).length,
+    [data],
+  );
+
   return (
     <div className="space-y-4">
+      {/* Orphaned-CLIENT warning — these users can't apply for programs or
+          send feedback until a farmer profile is linked. */}
+      {orphanCount > 0 && (
+        <div className="bg-amber-50 border border-amber-300 rounded-xl p-3 flex items-start gap-3">
+          <AlertTriangle className="text-amber-600 shrink-0 mt-0.5" size={16} aria-hidden="true" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-amber-900">
+              {orphanCount} farmer account{orphanCount === 1 ? "" : "s"} not yet linked to a profile
+            </p>
+            <p className="text-xs text-amber-800 mt-0.5 leading-relaxed">
+              These accounts can sign in but can't apply for programs or send feedback.
+              Open <span className="font-medium">Farmers → Register farmer</span> and pick the
+              account from the "Linked user" dropdown to complete the link.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Toolbar */}
       <div className="flex items-center gap-3">
         <div className="relative flex-1 max-w-sm">
@@ -100,7 +123,20 @@ export function UserTable({ isAdmin }: UserTableProps) {
                 <td className="px-4 py-3 font-medium text-gray-900">{user.full_name}</td>
                 <td className="px-4 py-3 text-gray-600">{user.username}</td>
                 <td className="px-4 py-3 text-gray-600">{user.email || "—"}</td>
-                <td className="px-4 py-3"><UserRoleBadge role={user.role} /></td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <UserRoleBadge role={user.role} />
+                    {user.role === "CLIENT" && user.has_farmer_profile === false && (
+                      <span
+                        title="No farmer profile linked yet — this user can't apply for programs or send feedback."
+                        className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-800 ring-1 ring-inset ring-amber-300"
+                      >
+                        <AlertTriangle size={9} strokeWidth={2.5} />
+                        No profile
+                      </span>
+                    )}
+                  </div>
+                </td>
                 <td className="px-4 py-3">
                   <span className={cn(
                     "text-xs font-medium",

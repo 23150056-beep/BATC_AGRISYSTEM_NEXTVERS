@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Leaf, ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
+import { Leaf, ChevronLeft, ChevronRight, CheckCircle2, Upload, ShieldCheck, FileText, X, ArrowLeft } from "lucide-react";
 
 import { selfRegistrationSchema, type SelfRegistrationValues } from "@/features/farmers/schemas/farmerSchema";
 import { farmersApi } from "@/features/farmers/api/farmers.api";
@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 // ---------------------------------------------------------------------------
 // Step metadata
 // ---------------------------------------------------------------------------
-const STEPS = ["Account", "Personal Info", "Address", "Farm & Consent"];
+const STEPS = ["Account", "Personal Info", "Address", "Farm & Consent", "Verification"];
 
 /**
  * Fields validated on each step's "Next" click.
@@ -29,17 +29,101 @@ const STEP_FIELDS: Array<(keyof SelfRegistrationValues)[]> = [
   ["first_name", "last_name", "sex", "dob", "civil_status", "mobile_number"],
   ["barangay"],
   ["farm_area_ha", "household_size", "consent_dpa"],
+  [], // Verification step has no required fields
 ];
 
 // ---------------------------------------------------------------------------
 // Page component
 // ---------------------------------------------------------------------------
+// Step 4 – Verification upload component
+function Step4Verification({
+  docFile,
+  setDocFile,
+}: {
+  docFile: File | null;
+  setDocFile: (f: File | null) => void;
+}) {
+  const criteria = [
+    { flag: "4Ps", label: "4Ps beneficiary card / certificate" },
+    { flag: "PWD", label: "PWD ID or certificate" },
+    { flag: "IP",  label: "NCIP certificate (Indigenous People)" },
+  ];
+  return (
+    <div className="space-y-5">
+      <div className="bg-[#F7FAF3] border border-[#D6E8BF] rounded-xl p-4 flex gap-3">
+        <ShieldCheck size={18} className="text-[#3B6D11] mt-0.5 shrink-0" />
+        <div>
+          <p className="text-sm font-semibold text-[#27500A]">Optional: Upload Verification Document</p>
+          <p className="text-xs text-[#3B6D11] mt-0.5 leading-relaxed">
+            This step is completely optional. You may upload it later from your profile page.
+            Verified farmers may receive priority access to certain programs.
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Accepted criteria</p>
+        <ul className="space-y-1.5">
+          {criteria.map((c) => (
+            <li key={c.flag} className="flex items-center gap-2 text-sm text-gray-600">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#3B6D11]" />
+              <span className="font-medium text-gray-700">{c.flag}</span> — {c.label}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="border-2 border-dashed border-gray-200 rounded-xl p-5 text-center hover:border-[var(--color-brand-300)] transition-colors">
+        {docFile ? (
+          <div className="flex items-center justify-center gap-3">
+            <FileText size={20} className="text-[var(--color-brand-600)] shrink-0" />
+            <div className="text-left">
+              <p className="text-sm font-medium text-gray-800 max-w-[220px] truncate">{docFile.name}</p>
+              <p className="text-xs text-gray-400">{(docFile.size / 1024).toFixed(1)} KB</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setDocFile(null)}
+              className="ml-2 p-1 rounded text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        ) : (
+          <label className="cursor-pointer block">
+            <Upload size={22} className="mx-auto text-gray-300 mb-2" />
+            <p className="text-sm text-gray-500">
+              <span className="text-[var(--color-brand-600)] font-medium">Click to upload</span> or drag and drop
+            </p>
+            <p className="text-xs text-gray-400 mt-0.5">Images (JPG, PNG) or PDF — max 5 MB</p>
+            <input
+              type="file"
+              accept="image/*,application/pdf"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f && f.size <= 5 * 1024 * 1024) setDocFile(f);
+                else if (f) toast.error("File must be under 5 MB.");
+              }}
+            />
+          </label>
+        )}
+      </div>
+
+      <p className="text-xs text-gray-400 text-center">
+        You can always upload this later from your <strong>Profile</strong> page.
+      </p>
+    </div>
+  );
+}
+
 export function FarmerRegisterPage() {
   const navigate = useNavigate();
   const { setTokens, setUser, isAuthenticated } = useAuthStore();
   const [step, setStep]               = useState(0);
   const [submitting, setSubmitting]   = useState(false);
   const [justNavigated, setJustNavigated] = useState(false);
+  const [verificationDoc, setVerificationDoc] = useState<File | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // If already authenticated, redirect to the appropriate dashboard
@@ -85,10 +169,15 @@ export function FarmerRegisterPage() {
   // Submit
   // ------------------------------------------------------------------
   async function onSubmit(values: SelfRegistrationValues) {
+    // If on the verification step, skip form submit and navigate to it
+    if (step < STEPS.length - 1) { handleNext(); return; }
+
     setSubmitting(true);
     try {
       // confirm_password is only for frontend validation — strip it before sending
       const { confirm_password: _, linked_user_id: __, ...payload } = values as any;
+
+      // Step 1: Register (JSON — avoids multipart complexity with nested parcels)
       const result = await farmersApi.selfRegister({
         ...payload,
         username:         values.username,
@@ -99,6 +188,20 @@ export function FarmerRegisterPage() {
       // Auto-login: persist tokens and user in the store
       setTokens(result.access, result.refresh);
       setUser(result.user);
+
+      // Step 2: If a verification document was selected, upload it now
+      if (verificationDoc) {
+        try {
+          const fd = new FormData();
+          fd.append("verification_document", verificationDoc);
+          await farmersApi.updateMe(fd);
+        } catch {
+          // Non-fatal — farmer is registered, doc can be uploaded from profile
+          toast.warning("Registered! Verification document upload failed — you can retry from your profile.");
+          navigate("/app/home", { replace: true });
+          return;
+        }
+      }
 
       toast.success("Registration successful! Welcome to the BATC portal.");
       navigate("/app/home", { replace: true });
@@ -174,6 +277,15 @@ export function FarmerRegisterPage() {
   // ------------------------------------------------------------------
   return (
     <div className="min-h-screen bg-gradient-to-br from-[var(--color-brand-100)] via-gray-50 to-white flex flex-col items-center justify-center px-4 py-8">
+      {/* Back to landing */}
+      <Link
+        to="/"
+        className="fixed top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-gray-900 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg shadow-sm hover:shadow transition-all"
+      >
+        <ArrowLeft size={13} />
+        Back to home
+      </Link>
+
       {/* Brand header */}
       <div className="text-center mb-6">
         <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl mb-3 bg-[var(--color-brand-600)] shadow-lg shadow-[var(--color-brand-600)]/20">
@@ -232,6 +344,9 @@ export function FarmerRegisterPage() {
             {step === 1 && <Step1Personal form={form} />}
             {step === 2 && <Step2Address form={form} />}
             {step === 3 && <Step3Farm form={form} isSelfRegistration />}
+            {step === 4 && (
+              <Step4Verification docFile={verificationDoc} setDocFile={setVerificationDoc} />
+            )}
           </form>
         </div>
 
@@ -266,7 +381,11 @@ export function FarmerRegisterPage() {
               className="px-5 py-2 text-sm text-white rounded-md disabled:opacity-60 transition-opacity hover:opacity-90"
               style={{ backgroundColor: "#3B6D11" }}
             >
-              {submitting ? "Registering…" : "Complete Registration"}
+              {submitting
+                ? "Registering…"
+                : verificationDoc
+                  ? "Register & Upload Doc"
+                  : "Complete Registration"}
             </button>
           )}
         </div>

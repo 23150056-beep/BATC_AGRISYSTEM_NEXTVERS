@@ -13,11 +13,12 @@ export function AdminFarmersPage() {
   return (
     <div>
       <PageHeader
+        eyebrow="Operations"
         title="Farmers"
         description="Registered farmer profiles in Bauang."
         actions={
           <Button leftIcon={<Plus size={14} />} onClick={() => setRegistering(true)}>
-            Register Farmer
+            Register farmer
           </Button>
         }
       />

@@ -21,6 +21,7 @@ class FarmerListSerializer(serializers.ModelSerializer):
             "is_4ps", "is_pwd", "is_ip",
             "consent_dpa", "is_archived", "created_at",
             "encoded_by_name",
+            "profile_photo", "verification_status", "is_verified",
         ]
 
     def get_encoded_by_name(self, obj):
@@ -48,6 +49,7 @@ class FarmerDetailSerializer(FarmerListSerializer):
             "farm_area_ha", "household_size",
             "consent_dpa_at", "archived_at", "updated_at",
             "parcels", "linked_user_id", "linked_user_name",
+            "verification_document",
         ]
 
 
@@ -64,6 +66,8 @@ class FarmerWriteSerializer(serializers.ModelSerializer):
             "rsbsa_reference", "barangay", "sitio",
             "livelihood_type", "farm_area_ha", "household_size",
             "consent_dpa", "parcels", "linked_user_id",
+            "profile_photo", "verification_document",
+            "verification_status", "is_verified",
         ]
 
     # ------------------------------------------------------------------
@@ -273,3 +277,93 @@ class FarmerSelfRegistrationSerializer(FarmerWriteSerializer):
             FarmParcel.objects.create(farmer=farmer, **p)
 
         return farmer, user
+
+
+# ---------------------------------------------------------------------------
+# Farmer self-registration — now accepts optional verification_document
+# ---------------------------------------------------------------------------
+# The base FarmerSelfRegistrationSerializer already inherits FarmerWriteSerializer
+# which now includes verification_document; mark it not required so the demo
+# registration flow works without forcing an upload.
+FarmerSelfRegistrationSerializer.Meta.fields = (
+    [f for f in FarmerSelfRegistrationSerializer.Meta.fields]
+)
+
+
+# ---------------------------------------------------------------------------
+# Self-update (CLIENT portal: limited fields only)
+# ---------------------------------------------------------------------------
+
+class FarmerSelfUpdateSerializer(serializers.ModelSerializer):
+    """
+    Used when a CLIENT farmer updates their own profile via PATCH /api/farmers/me/.
+
+    Restricted to fields the farmer can safely edit themselves:
+    - Contact & personal basics
+    - Profile photo (canvas-compressed JPEG uploaded by client)
+    - Verification document upload (triggers status → PENDING)
+
+    Staff-only fields (barangay, rsbsa_reference, is_4ps, etc.) are excluded.
+    """
+
+    class Meta:
+        model = Farmer
+        fields = [
+            "mobile_number",
+            "civil_status",
+            "sitio",
+            "profile_photo",
+            "verification_document",
+        ]
+
+    def validate_mobile_number(self, value):
+        if not value:
+            return value
+        digits = "".join(ch for ch in value if ch.isdigit())
+        if digits.startswith("63") and len(digits) == 12:
+            canonical = "+" + digits
+        elif digits.startswith("9") and len(digits) == 10:
+            canonical = "+63" + digits
+        elif digits.startswith("0") and len(digits) == 11:
+            canonical = "+63" + digits[1:]
+        else:
+            raise serializers.ValidationError(
+                "Mobile number must be a valid Philippine number (e.g. 09171234567)."
+            )
+        qs = Farmer.objects.filter(mobile_number=canonical).exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise serializers.ValidationError(
+                "This mobile number is already registered to another farmer."
+            )
+        return canonical
+
+    def update(self, instance, validated_data):
+        # If farmer uploads a verification document, reset status to PENDING
+        if "verification_document" in validated_data and validated_data["verification_document"]:
+            from apps.farmers.models import VerificationStatus
+            instance.verification_status = VerificationStatus.PENDING
+            instance.is_verified = False
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
+
+# ---------------------------------------------------------------------------
+# Staff verification action serializer
+# ---------------------------------------------------------------------------
+
+class FarmerVerifySerializer(serializers.ModelSerializer):
+    """Minimal serializer for staff/admin to update verification_status."""
+
+    class Meta:
+        model = Farmer
+        fields = ["verification_status", "is_verified"]
+
+    def update(self, instance, validated_data):
+        from apps.farmers.models import VerificationStatus
+        status = validated_data.get("verification_status", instance.verification_status)
+        instance.verification_status = status
+        instance.is_verified = (status == VerificationStatus.VERIFIED)
+        instance.save(update_fields=["verification_status", "is_verified", "updated_at"])
+        return instance

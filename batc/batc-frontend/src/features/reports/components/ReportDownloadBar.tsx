@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Download, FileSpreadsheet, X } from "lucide-react";
+import { Download, FileSpreadsheet } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui";
+import { Button, Card } from "@/components/ui";
 import { reportsApi } from "@/features/reports/api/reports.api";
 
 type FilterType = "text" | "date" | "select" | "checkbox" | "daterange";
@@ -12,7 +11,6 @@ export interface ReportFilter {
   label: string;
   type: FilterType;
   options?: { value: string; label: string }[];
-  /** Hint shown below the input. */
   hint?: string;
 }
 
@@ -22,18 +20,26 @@ interface Props {
   endpoint: string;
   /** Optional file basename without `.csv` extension. */
   filename?: string;
+  /** Read-only chips shown under the description (design-system labels). */
   filters?: ReportFilter[];
-  /** Show a small icon left of the title (one of the lucide React components). */
+  /** Lucide icon shown in the brand-tinted square tile. */
   icon?: React.ComponentType<{ size?: number; className?: string }>;
+  /**
+   * Date range applied at the page level — the only filter the row
+   * actively respects when downloading (matching the design's pattern of
+   * one global filter + read-only chip labels).
+   */
+  dateRange?: { from: string; to: string };
 }
 
 /**
- * A single export card. State for filters lives in this component so each
- * card is fully isolated — no fragile DOM querying like before.
+ * Export row matching the design system's `ReportRow`:
+ *   - left:   brand-tinted icon tile
+ *   - center: title + description + read-only `font-mono` filter chips
+ *   - right:  vertical CSV + XLSX action stack
  *
- * Includes a live "rows to export" preview that hits the backend with
- * `?count=true` so users know whether their filters will return anything
- * before they download a 0-row CSV.
+ * Downloads use the page-level `dateRange` (mapped to date_from/date_to)
+ * since the design intentionally keeps per-row UI declarative.
  */
 export function ReportDownloadBar({
   title,
@@ -42,42 +48,33 @@ export function ReportDownloadBar({
   filename,
   filters = [],
   icon: Icon = FileSpreadsheet,
+  dateRange,
 }: Props) {
-  const [values, setValues] = useState<Record<string, string>>({});
   const [downloading, setDownloading] = useState(false);
 
-  // Build the active params, dropping any empty values so the count query
-  // matches what the actual download will send.
-  const activeParams = Object.fromEntries(
-    Object.entries(values).filter(([, v]) => v !== "" && v !== undefined && v !== null)
-  );
-  const hasFilters = Object.keys(activeParams).length > 0;
-
-  // Live row-count preview, debounced naturally by react-query keyed on params.
-  const { data: rowCount, isFetching: countLoading } = useQuery({
-    queryKey: ["report-count", endpoint, activeParams],
-    queryFn:  () => reportsApi.count(endpoint, activeParams),
-    staleTime: 30_000,
-  });
-
-  function update(key: string, value: string) {
-    setValues((prev) => ({ ...prev, [key]: value }));
+  function activeParams(): Record<string, string> {
+    if (!dateRange) return {};
+    // Only emit params for filters this report actually accepts — avoids
+    // sending date_from to endpoints that don't recognize it.
+    const keys = new Set(filters.map((f) => f.key));
+    const out: Record<string, string> = {};
+    if (keys.has("date_from") && dateRange.from) out.date_from = dateRange.from;
+    if (keys.has("date_to") && dateRange.to) out.date_to = dateRange.to;
+    return out;
   }
 
-  function clearAll() {
-    setValues({});
-  }
-
-  async function handleDownload() {
-    if (rowCount === 0) {
-      toast.warning("Nothing to export — no rows match the current filters.");
+  async function handleDownload(format: "csv" | "xlsx") {
+    if (format === "xlsx") {
+      toast.info("XLSX export is coming soon — use CSV for now.");
       return;
     }
     setDownloading(true);
     try {
-      const fname = `${filename ?? title.toLowerCase().replace(/\s+/g, "_")}_${new Date().toISOString().slice(0, 10)}.csv`;
-      await reportsApi.download(endpoint, fname, activeParams);
-      toast.success(`Exported ${rowCount ?? ""} row${rowCount === 1 ? "" : "s"} to ${fname}`);
+      const fname = `${filename ?? title.toLowerCase().replace(/\s+/g, "_")}_${new Date()
+        .toISOString()
+        .slice(0, 10)}.csv`;
+      await reportsApi.download(endpoint, fname, activeParams());
+      toast.success(`Exported ${title} to ${fname}`);
     } catch {
       toast.error("Download failed. Please try again.");
     } finally {
@@ -86,142 +83,53 @@ export function ReportDownloadBar({
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3 hover:border-gray-300 transition-colors">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-start gap-2.5 min-w-0 flex-1">
-          <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
-            style={{ background: "var(--color-brand-100)", color: "var(--color-brand-600)" }}
-            aria-hidden="true"
-          >
-            <Icon size={15} />
-          </div>
-          <div className="min-w-0 flex-1">
-            <h3 className="text-sm font-semibold text-gray-900">{title}</h3>
-            {description && (
-              <p className="text-xs text-gray-500 mt-0.5">{description}</p>
-            )}
-          </div>
-        </div>
-        <Button
-          size="sm"
-          leftIcon={<Download size={12} />}
-          loading={downloading}
-          disabled={rowCount === 0}
-          onClick={handleDownload}
+    <Card className="p-4">
+      <div className="flex items-start gap-3">
+        {/* Icon tile */}
+        <div
+          className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+          style={{ background: "#eaf3de", color: "#3b6d11" }}
+          aria-hidden="true"
         >
-          Download CSV
-        </Button>
-      </div>
+          <Icon size={18} />
+        </div>
 
-      {filters.length > 0 && (
-        <div className="space-y-2 pt-2 border-t border-gray-100">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-            {filters.map((f) => (
-              <FilterField
-                key={f.key}
-                filter={f}
-                value={values[f.key] ?? ""}
-                onChange={(v) => update(f.key, v)}
-              />
-            ))}
-          </div>
-
-          <div className="flex items-center justify-between pt-1">
-            <p className="text-[11px] text-gray-500">
-              {countLoading ? (
-                <span className="inline-flex items-center gap-1">
-                  <span className="w-1 h-1 rounded-full bg-gray-400 animate-pulse" />
-                  Counting…
+        {/* Center: title + desc + chips */}
+        <div className="flex-1 min-w-0">
+          <p className="font-semibold text-gray-900 text-sm">{title}</p>
+          {description && (
+            <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{description}</p>
+          )}
+          {filters.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mt-2.5">
+              {filters.map((f) => (
+                <span
+                  key={f.key}
+                  className="inline-flex items-center gap-1 text-[10px] font-mono text-gray-600 bg-gray-100 border border-gray-200 rounded px-1.5 py-0.5"
+                >
+                  {f.label}
                 </span>
-              ) : rowCount !== undefined ? (
-                <>
-                  <span
-                    className={
-                      rowCount === 0
-                        ? "font-medium text-amber-700"
-                        : "font-medium text-gray-700"
-                    }
-                  >
-                    {rowCount.toLocaleString()}
-                  </span>{" "}
-                  row{rowCount === 1 ? "" : "s"} will be exported
-                </>
-              ) : null}
-            </p>
-            {hasFilters && (
-              <button
-                onClick={clearAll}
-                type="button"
-                className="text-[11px] text-gray-500 hover:text-gray-800 inline-flex items-center gap-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-300 rounded"
-              >
-                <X size={11} /> Clear filters
-              </button>
-            )}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
-      )}
-    </div>
-  );
-}
 
-/* -------------------------------------------------------------------------- */
-
-function FilterField({
-  filter,
-  value,
-  onChange,
-}: {
-  filter: ReportFilter;
-  value: string;
-  onChange: (v: string) => void;
-}) {
-  const id = `report-${filter.key}`;
-  const baseInput =
-    "w-full px-2.5 py-1.5 border border-gray-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-500)]/30 focus:border-[var(--color-brand-500)]";
-
-  return (
-    <div>
-      <label htmlFor={id} className="block text-[11px] font-medium text-gray-600 mb-1">
-        {filter.label}
-      </label>
-      {filter.type === "select" ? (
-        <select
-          id={id}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className={baseInput}
-        >
-          <option value="">All</option>
-          {filter.options?.map((o) => (
-            <option key={o.value} value={o.value}>
-              {o.label}
-            </option>
-          ))}
-        </select>
-      ) : filter.type === "checkbox" ? (
-        <label htmlFor={id} className="flex items-center gap-2 h-[34px] px-2.5 border border-gray-300 rounded-md text-sm bg-white cursor-pointer hover:bg-gray-50">
-          <input
-            id={id}
-            type="checkbox"
-            checked={value === "true"}
-            onChange={(e) => onChange(e.target.checked ? "true" : "")}
-            className="rounded border-gray-300 text-[var(--color-brand-600)] focus:ring-[var(--color-brand-500)]/30"
-          />
-          <span className="text-xs text-gray-700">{filter.hint ?? "Enable"}</span>
-        </label>
-      ) : (
-        <input
-          id={id}
-          type={filter.type}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className={baseInput}
-        />
-      )}
-      {filter.hint && filter.type !== "checkbox" && (
-        <p className="text-[10px] text-gray-400 mt-0.5">{filter.hint}</p>
-      )}
-    </div>
+        {/* Right: vertical CSV / XLSX */}
+        <div className="flex flex-col gap-1.5 shrink-0">
+          <Button
+            size="sm"
+            variant="secondary"
+            leftIcon={<Download size={11} />}
+            loading={downloading}
+            onClick={() => handleDownload("csv")}
+          >
+            CSV
+          </Button>
+          <Button size="sm" variant="ghost" onClick={() => handleDownload("xlsx")}>
+            XLSX
+          </Button>
+        </div>
+      </div>
+    </Card>
   );
 }

@@ -26,11 +26,24 @@ export function ApplicationReviewPanel() {
     qc.invalidateQueries({ queryKey: ["dashboard-staff"] });
   }
 
+  /**
+   * Approval reserves stock via FEFO, so the inventory page's reserved_qty /
+   * available_qty / summary all change. Invalidate them so any open inventory
+   * tab reflects the new reservation immediately.
+   */
+  function invalidateInventory() {
+    qc.invalidateQueries({ queryKey: ["inventory-items"] });
+    qc.invalidateQueries({ queryKey: ["inventory-summary"] });
+    qc.invalidateQueries({ queryKey: ["inventory-usage"] });
+    qc.invalidateQueries({ queryKey: ["distributions"] });
+  }
+
   const approveMut = useMutation({
     mutationFn: (id: number) => applicationsApi.approve(id),
     onSuccess: (updated) => {
       qc.invalidateQueries({ queryKey: ["applications"] });
       invalidateDashboards();
+      invalidateInventory();
       toast.success("Application approved — distribution scheduled.");
       setSelected(updated);
     },

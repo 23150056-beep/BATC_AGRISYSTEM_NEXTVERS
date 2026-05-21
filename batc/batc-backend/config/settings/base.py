@@ -63,6 +63,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
+    "config.middleware.NoCacheAuthMiddleware",  # SECURITY FIX: Prevent caching of authenticated pages
 ]
 
 ROOT_URLCONF = "config.urls"

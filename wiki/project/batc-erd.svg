@@ -1,0 +1,279 @@
+<svg viewBox="0 0 2000 2400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Define styles -->
+  <defs>
+    <style>
+      .table-box { fill: white; stroke: black; stroke-width: 2; }
+      .table-name { font-weight: bold; font-size: 14px; font-family: Arial; }
+      .field-text { font-size: 12px; font-family: Arial; }
+      .pk-text { font-weight: bold; }
+      .fk-text { font-style: italic; }
+      .line { stroke: black; stroke-width: 1.5; fill: none; }
+      .crow-foot { fill: black; }
+    </style>
+  </defs>
+  
+  <!-- Title -->
+  <text x="1000" y="30" font-size="24" font-weight="bold" text-anchor="middle" font-family="Arial">BATC System - Entity Relationship Diagram</text>
+  
+  <!-- TBL_USER (Center Top) -->
+  <rect x="750" y="80" width="200" height="160" class="table-box"/>
+  <text x="850" y="100" text-anchor="middle" class="table-name">tbl_user</text>
+  <line x1="750" y1="110" x2="950" y2="110" stroke="black" stroke-width="1"/>
+  <text x="760" y="128" class="pk-text">PK user_id</text>
+  <text x="760" y="145" class="field-text">username</text>
+  <text x="760" y="162" class="field-text">password</text>
+  <text x="760" y="179" class="field-text">email</text>
+  <text x="760" y="196" class="field-text">role</text>
+  <text x="760" y="213" class="field-text">is_active</text>
+  <text x="760" y="230" class="field-text">created_at</text>
+  
+  <!-- TBL_FARMER (Left) -->
+  <rect x="100" y="350" width="220" height="200" class="table-box"/>
+  <text x="210" y="370" text-anchor="middle" class="table-name">tbl_farmer</text>
+  <line x1="100" y1="380" x2="320" y2="380" stroke="black" stroke-width="1"/>
+  <text x="110" y="398" class="pk-text">PK farmer_id</text>
+  <text x="110" y="415" class="fk-text">FK linked_user_id</text>
+  <text x="110" y="432" class="fk-text">FK encoded_by_id</text>
+  <text x="110" y="449" class="field-text">first_name</text>
+  <text x="110" y="466" class="field-text">last_name</text>
+  <text x="110" y="483" class="field-text">mobile_number</text>
+  <text x="110" y="500" class="field-text">barangay</text>
+  <text x="110" y="517" class="field-text">household_size</text>
+  <text x="110" y="534" class="field-text">created_at</text>
+  
+  <!-- TBL_PROGRAM (Right Top) -->
+  <rect x="1400" y="350" width="220" height="180" class="table-box"/>
+  <text x="1510" y="370" text-anchor="middle" class="table-name">tbl_program</text>
+  <line x1="1400" y1="380" x2="1620" y2="380" stroke="black" stroke-width="1"/>
+  <text x="1410" y="398" class="pk-text">PK program_id</text>
+  <text x="1410" y="415" class="field-text">name</text>
+  <text x="1410" y="432" class="field-text">description</text>
+  <text x="1410" y="449" class="field-text">start_date</text>
+  <text x="1410" y="466" class="field-text">end_date</text>
+  <text x="1410" y="483" class="field-text">status</text>
+  <text x="1410" y="500" class="field-text">created_at</text>
+  
+  <!-- TBL_FARM_PARCEL -->
+  <rect x="50" y="700" width="200" height="120" class="table-box"/>
+  <text x="150" y="720" text-anchor="middle" class="table-name">tbl_farm_parcel</text>
+  <line x1="50" y1="730" x2="250" y2="730" stroke="black" stroke-width="1"/>
+  <text x="60" y="748" class="pk-text">PK parcel_id</text>
+  <text x="60" y="765" class="fk-text">FK farmer_id</text>
+  <text x="60" y="782" class="field-text">area_ha</text>
+  <text x="60" y="799" class="field-text">commodity</text>
+  
+  <!-- TBL_INTERVENTION_APPLICATION (Center) -->
+  <rect x="700" y="550" width="260" height="220" class="table-box"/>
+  <text x="830" y="570" text-anchor="middle" class="table-name">tbl_intervention_application</text>
+  <line x1="700" y1="580" x2="960" y2="580" stroke="black" stroke-width="1"/>
+  <text x="710" y="598" class="pk-text">PK application_id</text>
+  <text x="710" y="615" class="fk-text">FK farmer_id</text>
+  <text x="710" y="632" class="fk-text">FK program_id</text>
+  <text x="710" y="649" class="fk-text">FK approved_by_id</text>
+  <text x="710" y="666" class="fk-text">FK rejected_by_id</text>
+  <text x="710" y="683" class="field-text">status</text>
+  <text x="710" y="700" class="field-text">applied_at</text>
+  <text x="710" y="717" class="field-text">reviewed_at</text>
+  <text x="710" y="734" class="field-text">rejection_reason</text>
+  <text x="710" y="751" class="field-text">created_at</text>
+  
+  <!-- TBL_INVENTORY_ITEM (Right Center) -->
+  <rect x="1350" y="700" width="240" height="150" class="table-box"/>
+  <text x="1470" y="720" text-anchor="middle" class="table-name">tbl_inventory_item</text>
+  <line x1="1350" y1="730" x2="1590" y2="730" stroke="black" stroke-width="1"/>
+  <text x="1360" y="748" class="pk-text">PK inventory_item_id</text>
+  <text x="1360" y="765" class="field-text">name</text>
+  <text x="1360" y="782" class="field-text">unit</text>
+  <text x="1360" y="799" class="field-text">current_qty</text>
+  <text x="1360" y="816" class="field-text">created_at</text>
+  
+  <!-- TBL_PROGRAM_ITEM (Right Upper) -->
+  <rect x="1380" y="950" width="220" height="120" class="table-box"/>
+  <text x="1490" y="970" text-anchor="middle" class="table-name">tbl_program_item</text>
+  <line x1="1380" y1="980" x2="1600" y2="980" stroke="black" stroke-width="1"/>
+  <text x="1390" y="998" class="pk-text">PK program_item_id</text>
+  <text x="1390" y="1015" class="fk-text">FK program_id</text>
+  <text x="1390" y="1032" class="fk-text">FK inventory_item_id</text>
+  <text x="1390" y="1049" class="field-text">allocated_qty</text>
+  
+  <!-- TBL_STOCK_BATCH -->
+  <rect x="1250" y="1200" width="240" height="160" class="table-box"/>
+  <text x="1370" y="1220" text-anchor="middle" class="table-name">tbl_stock_batch</text>
+  <line x1="1250" y1="1230" x2="1490" y2="1230" stroke="black" stroke-width="1"/>
+  <text x="1260" y="1248" class="pk-text">PK batch_id</text>
+  <text x="1260" y="1265" class="fk-text">FK inventory_item_id</text>
+  <text x="1260" y="1282" class="field-text">lot_number</text>
+  <text x="1260" y="1299" class="field-text">quantity_received</text>
+  <text x="1260" y="1316" class="field-text">expiry_date</text>
+  <text x="1260" y="1333" class="field-text">received_date</text>
+  
+  <!-- TBL_DISTRIBUTION (Center Bottom) -->
+  <rect x="650" y="900" width="260" height="200" class="table-box"/>
+  <text x="780" y="920" text-anchor="middle" class="table-name">tbl_distribution</text>
+  <line x1="650" y1="930" x2="910" y2="930" stroke="black" stroke-width="1"/>
+  <text x="660" y="948" class="pk-text">PK distribution_id</text>
+  <text x="660" y="965" class="fk-text">FK application_id</text>
+  <text x="660" y="982" class="fk-text">FK inventory_item_id</text>
+  <text x="660" y="999" class="field-text">qty</text>
+  <text x="660" y="1016" class="field-text">status</text>
+  <text x="660" y="1033" class="field-text">scheduled_date</text>
+  <text x="660" y="1050" class="field-text">delivered_at</text>
+  <text x="660" y="1067" class="field-text">confirmed_at</text>
+  
+  <!-- TBL_BATCH_ALLOCATION -->
+  <rect x="1000" y="1350" width="240" height="120" class="table-box"/>
+  <text x="1120" y="1370" text-anchor="middle" class="table-name">tbl_batch_allocation</text>
+  <line x1="1000" y1="1380" x2="1240" y2="1380" stroke="black" stroke-width="1"/>
+  <text x="1010" y="1398" class="pk-text">PK allocation_id</text>
+  <text x="1010" y="1415" class="fk-text">FK distribution_id</text>
+  <text x="1010" y="1432" class="fk-text">FK stock_batch_id</text>
+  <text x="1010" y="1449" class="field-text">qty</text>
+  
+  <!-- TBL_STOCK_MOVEMENT -->
+  <rect x="700" y="1350" width="240" height="140" class="table-box"/>
+  <text x="820" y="1370" text-anchor="middle" class="table-name">tbl_stock_movement</text>
+  <line x1="700" y1="1380" x2="940" y2="1380" stroke="black" stroke-width="1"/>
+  <text x="710" y="1398" class="pk-text">PK movement_id</text>
+  <text x="710" y="1415" class="fk-text">FK inventory_item_id</text>
+  <text x="710" y="1432" class="fk-text">FK stock_batch_id</text>
+  <text x="710" y="1449" class="field-text">movement_type</text>
+  <text x="710" y="1466" class="field-text">qty</text>
+  
+  <!-- TBL_FEEDBACK -->
+  <rect x="400" y="1350" width="220" height="140" class="table-box"/>
+  <text x="510" y="1370" text-anchor="middle" class="table-name">tbl_feedback</text>
+  <line x1="400" y1="1380" x2="620" y2="1380" stroke="black" stroke-width="1"/>
+  <text x="410" y="1398" class="pk-text">PK feedback_id</text>
+  <text x="410" y="1415" class="fk-text">FK farmer_id</text>
+  <text x="410" y="1432" class="fk-text">FK distribution_id</text>
+  <text x="410" y="1449" class="field-text">rating</text>
+  <text x="410" y="1466" class="field-text">comment</text>
+  
+  <!-- TBL_ELIGIBILITY_CRITERION -->
+  <rect x="1650" y="600" width="240" height="120" class="table-box"/>
+  <text x="1770" y="620" text-anchor="middle" class="table-name">tbl_eligibility_criterion</text>
+  <line x1="1650" y1="630" x2="1890" y2="630" stroke="black" stroke-width="1"/>
+  <text x="1660" y="648" class="pk-text">PK criterion_id</text>
+  <text x="1660" y="665" class="fk-text">FK program_id</text>
+  <text x="1660" y="682" class="field-text">field_name</text>
+  <text x="1660" y="699" class="field-text">operator</text>
+  
+  <!-- TBL_ANNOUNCEMENT -->
+  <rect x="100" y="1200" width="220" height="120" class="table-box"/>
+  <text x="210" y="1220" text-anchor="middle" class="table-name">tbl_announcement</text>
+  <line x1="100" y1="1230" x2="320" y2="1230" stroke="black" stroke-width="1"/>
+  <text x="110" y="1248" class="pk-text">PK announcement_id</text>
+  <text x="110" y="1265" class="fk-text">FK created_by_id</text>
+  <text x="110" y="1282" class="field-text">title</text>
+  <text x="110" y="1299" class="field-text">content</text>
+  
+  <!-- TBL_ACTIVITY_LOG -->
+  <rect x="100" y="1500" width="220" height="120" class="table-box"/>
+  <text x="210" y="1520" text-anchor="middle" class="table-name">tbl_activity_log</text>
+  <line x1="100" y1="1530" x2="320" y2="1530" stroke="black" stroke-width="1"/>
+  <text x="110" y="1548" class="pk-text">PK log_id</text>
+  <text x="110" y="1565" class="fk-text">FK user_id</text>
+  <text x="110" y="1582" class="field-text">log_action</text>
+  <text x="110" y="1599" class="field-text">log_time</text>
+  
+  <!-- TBL_NOTIFICATION -->
+  <rect x="1450" y="1500" width="220" height="140" class="table-box"/>
+  <text x="1560" y="1520" text-anchor="middle" class="table-name">tbl_notification</text>
+  <line x1="1450" y1="1530" x2="1670" y2="1530" stroke="black" stroke-width="1"/>
+  <text x="1460" y="1548" class="pk-text">PK notification_id</text>
+  <text x="1460" y="1565" class="fk-text">FK recipient_id</text>
+  <text x="1460" y="1582" class="field-text">type</text>
+  <text x="1460" y="1599" class="field-text">title</text>
+  <text x="1460" y="1616" class="field-text">message</text>
+  
+  <!-- Relationships (Crow's Foot Notation) -->
+  <!-- User to Farmer (encoded_by) -->
+  <path d="M 820 240 L 820 290 L 210 290 L 210 350" class="line"/>
+  <text x="750" y="320" font-size="11" font-family="Arial">encoded_by</text>
+  
+  <!-- User to Farmer (linked_user) -->
+  <path d="M 800 240 L 800 300 L 230 300 L 230 350" class="line"/>
+  <text x="670" y="280" font-size="11" font-family="Arial">linked_user</text>
+  
+  <!-- Farmer to Farm_Parcel -->
+  <path d="M 210 550 L 210 600 L 150 600 L 150 700" class="line"/>
+  <text x="160" y="640" font-size="11" font-family="Arial">has</text>
+  
+  <!-- User to Application (approved_by/rejected_by) -->
+  <path d="M 850 240 L 850 450 L 830 450 L 830 550" class="line"/>
+  <text x="860" y="400" font-size="11" font-family="Arial">approves</text>
+  
+  <!-- Farmer to Application -->
+  <path d="M 320 450 L 600 600 L 700 600" class="line"/>
+  <text x="500" y="580" font-size="11" font-family="Arial">submits</text>
+  
+  <!-- Program to Application -->
+  <path d="M 1400 450 L 1000 650 L 960 650" class="line"/>
+  <text x="1150" y="600" font-size="11" font-family="Arial">offers</text>
+  
+  <!-- Program to Eligibility_Criterion -->
+  <path d="M 1500 530 L 1650 600" class="line"/>
+  <text x="1550" y="570" font-size="11" font-family="Arial">defines</text>
+  
+  <!-- Program to Program_Item -->
+  <path d="M 1500 530 L 1490 950" class="line"/>
+  <text x="1520" y="750" font-size="11" font-family="Arial">includes</text>
+  
+  <!-- Program_Item to Inventory_Item -->
+  <path d="M 1500 950 L 1470 850" class="line"/>
+  <text x="1520" y="900" font-size="11" font-family="Arial">allocates</text>
+  
+  <!-- Inventory_Item to Stock_Batch -->
+  <path d="M 1400 850 L 1370 1200" class="line"/>
+  <text x="1420" y="1050" font-size="11" font-family="Arial">contains</text>
+  
+  <!-- Application to Distribution -->
+  <path d="M 830 770 L 780 900" class="line"/>
+  <text x="800" y="840" font-size="11" font-family="Arial">triggers</text>
+  
+  <!-- Distribution to Inventory_Item -->
+  <path d="M 910 1000 L 1350 780" class="line"/>
+  <text x="1100" y="900" font-size="11" font-family="Arial">distributes</text>
+  
+  <!-- Distribution to Batch_Allocation -->
+  <path d="M 850 1100 L 1050 1350" class="line"/>
+  <text x="920" y="1220" font-size="11" font-family="Arial">uses</text>
+  
+  <!-- Distribution to Stock_Movement -->
+  <path d="M 800 1100 L 820 1350" class="line"/>
+  <text x="760" y="1220" font-size="11" font-family="Arial">releases_via</text>
+  
+  <!-- Batch_Allocation to Stock_Batch -->
+  <path d="M 1200 1350 L 1320 1360" class="line"/>
+  <text x="1240" y="1340" font-size="11" font-family="Arial">selects</text>
+  
+  <!-- Stock_Batch to Stock_Movement -->
+  <path d="M 1250 1300 L 900 1300 L 820 1350" class="line"/>
+  <text x="1050" y="1290" font-size="11" font-family="Arial">logged_in</text>
+  
+  <!-- Farmer to Feedback -->
+  <path d="M 210 550 L 400 1400 L 510 1350" class="line"/>
+  <text x="350" y="950" font-size="11" font-family="Arial">gives</text>
+  
+  <!-- Distribution to Feedback -->
+  <path d="M 700 1100 L 550 1350" class="line"/>
+  <text x="600" y="1220" font-size="11" font-family="Arial">receives</text>
+  
+  <!-- User to Activity_Log -->
+  <path d="M 750 240 L 750 1200 L 210 1200 L 210 1500" class="line"/>
+  <text x="660" y="900" font-size="11" font-family="Arial">performs</text>
+  
+  <!-- User to Announcement -->
+  <path d="M 750 240 L 750 1200 L 210 1200" class="line"/>
+  <text x="680" y="800" font-size="11" font-family="Arial">creates</text>
+  
+  <!-- User to Notification -->
+  <path d="M 950 160 L 1350 160 L 1560 1500" class="line"/>
+  <text x="1200" y="150" font-size="11" font-family="Arial">receives</text>
+  
+  <!-- Legend -->
+  <text x="100" y="1900" font-size="12" font-weight="bold" font-family="Arial">Legend:</text>
+  <text x="100" y="1930" font-size="11" font-family="Arial">PK = Primary Key | FK = Foreign Key</text>
+  <text x="100" y="1960" font-size="11" font-family="Arial">||--o{ = One-to-Many | ||--|| = One-to-One</text>
+  <text x="100" y="1990" font-size="11" font-family="Arial">}o--|| = Many-to-One | o|--|| = Zero-or-One-to-One</text>
+</svg>

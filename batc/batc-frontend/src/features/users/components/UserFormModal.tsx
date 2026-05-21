@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { X } from "lucide-react";
+import { X, Info } from "lucide-react";
 import { usersApi, type UserItem } from "../api/users.api";
 import { cn } from "@/lib/utils";
 
@@ -33,10 +33,11 @@ export function UserFormModal({ user, onClose, onSaved }: Props) {
   const isNew = user === null;
   const schema = isNew ? createSchema : baseSchema;
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormValues>({
+  const { register, watch, handleSubmit, reset, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: { role: "CLIENT" },
   });
+  const selectedRole = watch("role");
 
   useEffect(() => {
     if (user) {
@@ -106,6 +107,18 @@ export function UserFormModal({ user, onClose, onSaved }: Props) {
               <option value="STAFF">Staff</option>
               <option value="ADMIN">Admin</option>
             </select>
+            {isNew && selectedRole === "CLIENT" && (
+              <div className="mt-2 flex items-start gap-2 px-3 py-2 rounded-md bg-amber-50 border border-amber-200">
+                <Info size={13} className="text-amber-700 mt-0.5 shrink-0" aria-hidden="true" />
+                <p className="text-[11px] text-amber-800 leading-relaxed">
+                  After creating this account, open{" "}
+                  <span className="font-medium">Farmers → Register farmer</span> and select{" "}
+                  <span className="font-medium">{"{this user}"}</span> in the "Linked user" dropdown.
+                  Without a linked farmer profile, this account can sign in but can't apply for
+                  programs or send feedback.
+                </p>
+              </div>
+            )}
           </div>
 
           {isNew && field("password", "Password", "password")}

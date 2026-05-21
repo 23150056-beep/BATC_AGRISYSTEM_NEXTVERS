@@ -4,23 +4,14 @@
 
 ---
 
-## HOW TO USE THIS FILE (READ FIRST)
+## HOW TO USE THIS FILE
 
-This is your **session handoff document**. Every time you hit a usage limit and start a new Claude session, paste this entire file as your first message with the following prefix:
-
-```
-I am building the BATC system (Bauang Agricultural Trade Center) — PROTOTYPE version.
-Here is my master build plan. Items marked [x] are DONE.
-Items marked [ ] are NOT YET DONE.
-The last completed task is marked with ← RESUME HERE.
-Please continue from the next unchecked task.
+This is the master build plan for the BATC prototype.
 Stack: React + Vite · Django REST Framework · SQLite (prototype)
 
-[PASTE THIS FILE BELOW]
-```
-
+Items marked `[x]` are DONE. Items marked `[ ]` are NOT YET DONE.
+The last completed task is marked with `← RESUME HERE`.
 Mark tasks as done by changing `[ ]` to `[x]`.
-Mark your resume point with `← RESUME HERE` on the last completed line.
 
 ---
 

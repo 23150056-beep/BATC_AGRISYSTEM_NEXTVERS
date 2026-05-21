@@ -53,7 +53,24 @@ class ApplicationViewSet(viewsets.ModelViewSet):
         return app
 
     def create(self, request, *args, **kwargs):
-        ser = ApplicationWriteSerializer(data=request.data)
+        # For CLIENT users, the farmer must always be the user's own profile —
+        # never trust a `farmer` field in the body. This prevents both stale
+        # frontend state from posting an invalid ID (which surfaced as a
+        # cryptic "Invalid pk … not found" error to the farmer) and a malicious
+        # client from applying on behalf of someone else.
+        payload = dict(request.data)
+        if request.user.is_authenticated and getattr(request.user, "is_client", False):
+            from apps.farmers.models import Farmer
+            farmer = Farmer.objects.filter(linked_user=request.user, is_archived=False).first()
+            if not farmer:
+                return Response(
+                    {"detail": "Your account is not yet linked to a farmer profile. "
+                               "Please contact your barangay encoder."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            payload["farmer"] = farmer.pk
+
+        ser = ApplicationWriteSerializer(data=payload)
         ser.is_valid(raise_exception=True)
         try:
             app = self.perform_create(ser)

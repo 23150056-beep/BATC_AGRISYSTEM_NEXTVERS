@@ -36,6 +36,23 @@ class LivelihoodType(models.TextChoices):
     OTHER = "OTHER", "Other"
 
 
+def farmer_photo_path(instance, filename):
+    ext = filename.rsplit(".", 1)[-1].lower()
+    return f"farmers/photos/{instance.pk or 'new'}.{ext}"
+
+
+def farmer_verification_path(instance, filename):
+    ext = filename.rsplit(".", 1)[-1].lower()
+    return f"farmers/verification/{instance.pk or 'new'}/{filename}"
+
+
+class VerificationStatus(models.TextChoices):
+    UNVERIFIED = "UNVERIFIED", "Unverified"
+    PENDING = "PENDING", "Pending Review"
+    VERIFIED = "VERIFIED", "Verified"
+    REJECTED = "REJECTED", "Rejected"
+
+
 class Farmer(models.Model):
     # Name
     first_name = models.CharField(max_length=100)
@@ -72,6 +89,28 @@ class Farmer(models.Model):
     # DPA
     consent_dpa = models.BooleanField(default=False)
     consent_dpa_at = models.DateTimeField(null=True, blank=True)
+
+    # Profile photo (uploaded by farmer via portal)
+    profile_photo = models.ImageField(
+        upload_to=farmer_photo_path,
+        null=True, blank=True,
+        verbose_name="Profile photo",
+    )
+
+    # Verification
+    verification_document = models.FileField(
+        upload_to=farmer_verification_path,
+        null=True, blank=True,
+        verbose_name="Verification document",
+        help_text="Image or PDF proving 4Ps / PWD / IP status.",
+    )
+    verification_status = models.CharField(
+        max_length=12,
+        choices=VerificationStatus.choices,
+        default=VerificationStatus.UNVERIFIED,
+        db_index=True,
+    )
+    is_verified = models.BooleanField(default=False, db_index=True)
 
     # Meta
     # encoded_by = the staff/admin who created the record (audit trail).

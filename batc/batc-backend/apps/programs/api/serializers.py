@@ -57,13 +57,17 @@ class ProgramItemSerializer(serializers.ModelSerializer):
 
 class ProgramListSerializer(serializers.ModelSerializer):
     item_count = serializers.SerializerMethodField()
+    # Annotated by the viewset's get_queryset() — exposed read-only.
+    application_count = serializers.IntegerField(read_only=True, default=0)
+    delivered_count = serializers.IntegerField(read_only=True, default=0)
 
     class Meta:
         model = Program
         fields = [
             "id", "name", "code", "source_agency", "status",
             "start_date", "end_date", "target_barangays",
-            "item_count", "created_at",
+            "item_count", "application_count", "delivered_count",
+            "created_at",
         ]
 
     def get_item_count(self, obj):

@@ -2,8 +2,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { Eye, EyeOff, Leaf, AlertTriangle, Lock } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Eye, EyeOff, Leaf, AlertTriangle, Lock, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { authApi } from "@/services/api/auth.api";
 import { useAuthStore } from "@/stores/authStore";
@@ -28,12 +28,26 @@ type FormValues = z.infer<typeof schema>;
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const { setTokens, setUser } = useAuthStore();
+  const { setTokens, setUser, logout } = useAuthStore();
   const [serverError, setServerError] = useState("");
   const [showPwd, setShowPwd] = useState(false);
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [demoLoading, setDemoLoading] = useState<string | null>(null);
   const [capsOn, setCapsOn] = useState(false);
+
+  // SECURITY FIX: When user arrives at login page (including via back button),
+  // treat it as an intent to logout. This prevents forward button from showing
+  // a cached authenticated page without re-login.
+  useEffect(() => {
+    // Check if user was previously logged in
+    const hasToken = localStorage.getItem("access_token");
+    if (hasToken) {
+      // User is arriving at login page while having a token
+      // This likely means they're navigating back from an authenticated page
+      // Clear their session so forward button won't restore the cached page
+      logout();
+    }
+  }, [logout]);
 
   async function quickLogin(username: string, password: string) {
     setDemoLoading(username);
@@ -97,6 +111,15 @@ export function LoginPage() {
 
   return (
     <div className="min-h-[100dvh] flex items-center justify-center bg-gradient-to-br from-[var(--color-brand-100)] via-gray-50 to-white px-4 py-8">
+      {/* Back to landing */}
+      <Link
+        to="/"
+        className="fixed top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-gray-900 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg shadow-sm hover:shadow transition-all"
+      >
+        <ArrowLeft size={13} />
+        Back to home
+      </Link>
+
       <div className="w-full max-w-sm">
         {/* Brand */}
         <div className="text-center mb-7">
