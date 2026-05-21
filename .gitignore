@@ -23,6 +23,20 @@ Thumbs.db
 # Manuscript / academic documents (not part of the system)
 BATC Documentation/
 
+# Internal notes / drafts — kept locally, not part of the repo
+SETUP_COMPLETE.md
+SECURITY_FIX_BROWSER_CACHE.md
+BATC_BUILD_PLAN.md
+batc_erd_notfinished.drawio
+start_backend.bat
+
+# Documentation wiki and deployment/dev configs (not needed to run)
+/wiki/
+/raw/
+/.github/
+/.devcontainer/
+render.yaml
+
 # Raw wiki sources — large binaries (markdown clippings are committed)
 raw/*.pdf
 raw/*.docx
